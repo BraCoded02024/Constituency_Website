@@ -1,6 +1,12 @@
 function getApiBase() {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
-  if (typeof window !== 'undefined') return `http://${window.location.hostname}:5001/api`;
+  if (typeof window !== 'undefined') {
+    // Production behind Nginx: same origin + /api (e.g. http://IP:8081/api)
+    if (process.env.NODE_ENV === 'development') {
+      return `http://${window.location.hostname}:5001/api`;
+    }
+    return `${window.location.origin}/api`;
+  }
   return 'http://localhost:5001/api';
 }
 

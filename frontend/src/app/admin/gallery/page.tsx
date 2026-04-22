@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import { getApiOrigin } from '@/lib/mediaUrl';
 import { Plus, Trash2, Loader2, X, Upload, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -43,8 +44,7 @@ export default function AdminGalleryPage() {
     setUploading(true);
     try {
       const { url } = await api.upload(file);
-      const base = typeof window !== 'undefined' ? `http://${window.location.hostname}:5001` : '';
-      setForm(f => ({ ...f, image: base + url }));
+      setForm(f => ({ ...f, image: getApiOrigin() + url }));
     } catch { toast.error('Upload failed'); }
     finally { setUploading(false); }
   };
