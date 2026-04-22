@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --ghana-green: #006B3F;
+  --ghana-gold: #FCD116;
+  --ghana-red: #CE1126;
+  --ghana-black: #111111;
+  --ghana-white: #FFFFFF;
+  --background: #FAFAFA;
+  --foreground: #111111;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ghana-green: #006B3F;
+  --color-ghana-green-light: #008F54;
+  --color-ghana-green-dark: #004D2D;
+  --color-ghana-gold: #FCD116;
+  --color-ghana-gold-dark: #D4A800;
+  --color-ghana-red: #CE1126;
+  --color-ghana-red-light: #E8334A;
+  --color-ghana-black: #111111;
+  --color-ghana-white: #FFFFFF;
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #006B3F;
+  color: white;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #006B3F;
+  box-shadow: 0 0 0 3px rgba(0, 107, 63, 0.15);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

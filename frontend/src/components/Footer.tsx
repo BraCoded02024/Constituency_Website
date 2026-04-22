@@ -1,0 +1,130 @@
+'use client';
+
+import Link from 'next/link';
+import { Phone, Mail, MapPin, Clock, Globe, MessageCircle, Camera, Play } from 'lucide-react';
+
+const quickLinks = [
+  { href: '/announcements', label: 'Announcements' },
+  { href: '/opportunities', label: 'Opportunities' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/events', label: 'Events' },
+  { href: '/gallery', label: 'Gallery' },
+];
+
+const serviceLinks = [
+  { href: '/register', label: 'Join the constituency updates' },
+  { href: '/concerns', label: 'Share a Concern' },
+  { href: '/volunteer', label: 'Volunteer' },
+  { href: '/about', label: 'About the MP' },
+];
+
+export default function Footer() {
+  return (
+    <footer className="bg-ghana-black text-white">
+      <div className="h-1 bg-gradient-to-r from-ghana-green via-ghana-gold to-ghana-red" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* About */}
+          <div>
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-ghana-gold rounded-full flex items-center justify-center">
+                <span className="text-ghana-green font-bold text-lg">JD</span>
+              </div>
+              <div>
+                <p className="font-bold text-lg">Ayawaso West Wuogon</p>
+                <p className="text-ghana-gold text-xs">Office of Hon. John Setor Dumelo, MP</p>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              The official office of Hon. John Setor Dumelo, Member of Parliament for Ayawaso West Wuogon. 
+              Dedicated to transparent governance, inclusive development, and community empowerment.
+            </p>
+            <div className="flex space-x-3 mt-4">
+              <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-ghana-green transition-colors">
+                <Globe size={16} />
+              </a>
+              <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-ghana-green transition-colors">
+                <MessageCircle size={16} />
+              </a>
+              <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-ghana-green transition-colors">
+                <Camera size={16} />
+              </a>
+              <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-ghana-green transition-colors">
+                <Play size={16} />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-ghana-gold">Quick Links</h3>
+            <ul className="space-y-2">
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-white text-sm transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-ghana-gold">Services</h3>
+            <ul className="space-y-2">
+              {serviceLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-white text-sm transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-ghana-gold">Contact Us</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start space-x-3">
+                <MapPin size={16} className="text-ghana-green mt-0.5 shrink-0" />
+                <span className="text-gray-400 text-sm">Constituency Office, Ayawaso West Wuogon, Accra, Ghana</span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <Phone size={16} className="text-ghana-green shrink-0" />
+                <span className="text-gray-400 text-sm">+233 (0) 30 XXX XXXX</span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <Mail size={16} className="text-ghana-green shrink-0" />
+                <span className="text-gray-400 text-sm">info@constituency.gov.gh</span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <Clock size={16} className="text-ghana-green shrink-0" />
+                <span className="text-gray-400 text-sm">Mon - Fri: 8:00 AM - 5:00 PM</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between">
+          <p className="text-gray-500 text-xs" suppressHydrationWarning>
+            &copy; {new Date().getFullYear()} Office of Hon. John Setor Dumelo, MP - Ayawaso West Wuogon. All rights reserved.
+          </p>
+          <p className="text-gray-600 text-xs mt-1 sm:mt-0">
+            Powered by the Office of Hon. John Setor Dumelo
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
