@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Phone, Mail, MapPin, Clock, Globe, MessageCircle, Camera, Play } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Globe, MessageCircle, Camera, Play, Landmark } from 'lucide-react';
+import { demoContent } from '@/lib/demoContent';
 
 const quickLinks = [
   { href: '/announcements', label: 'Announcements' },
@@ -15,7 +16,7 @@ const serviceLinks = [
   { href: '/register', label: 'Join the constituency updates' },
   { href: '/concerns', label: 'Share a Concern' },
   { href: '/volunteer', label: 'Volunteer' },
-  { href: '/about', label: 'About the MP' },
+  { href: '/about', label: demoContent.footer.aboutLinkLabel },
 ];
 
 export default function Footer() {
@@ -29,16 +30,16 @@ export default function Footer() {
           <div>
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-ghana-gold rounded-full flex items-center justify-center">
-                <span className="text-ghana-green font-bold text-lg">JD</span>
+                <Landmark size={22} className="text-ghana-green" strokeWidth={2} aria-hidden />
               </div>
               <div>
-                <p className="font-bold text-lg">Ayawaso West Wuogon</p>
-                <p className="text-ghana-gold text-xs">Office of Hon. John Setor Dumelo, MP</p>
+                <p className="font-bold text-lg">{demoContent.constituency.name}</p>
+                <p className="text-ghana-gold text-xs">{demoContent.office.footerTagline}</p>
               </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              The official office of Hon. John Setor Dumelo, Member of Parliament for Ayawaso West Wuogon. 
-              Dedicated to transparent governance, inclusive development, and community empowerment.
+            <p className="text-gray-400 text-sm leading-relaxed">{demoContent.office.footerDescription}</p>
+            <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-wide mt-3 border border-white/15 rounded px-2 py-1 inline-block">
+              {demoContent.badges.system}
             </p>
             <div className="flex space-x-3 mt-4">
               <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-ghana-green transition-colors">
@@ -96,15 +97,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
                 <MapPin size={16} className="text-ghana-green mt-0.5 shrink-0" />
-                <span className="text-gray-400 text-sm">Constituency Office, Ayawaso West Wuogon, Accra, Ghana</span>
+                <span className="text-gray-400 text-sm">{demoContent.constituency.officeAddressLine}</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={16} className="text-ghana-green shrink-0" />
-                <span className="text-gray-400 text-sm">+233 (0) 30 XXX XXXX</span>
+                <span className="text-gray-400 text-sm">{demoContent.contact.phoneDisplay}</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={16} className="text-ghana-green shrink-0" />
-                <span className="text-gray-400 text-sm">info@constituency.gov.gh</span>
+                <span className="text-gray-400 text-sm">{demoContent.contact.emailDisplay}</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Clock size={16} className="text-ghana-green shrink-0" />
@@ -118,11 +119,9 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between">
           <p className="text-gray-500 text-xs" suppressHydrationWarning>
-            &copy; {new Date().getFullYear()} Office of Hon. John Setor Dumelo, MP - Ayawaso West Wuogon. All rights reserved.
+            &copy; {new Date().getFullYear()} {demoContent.copyright.line}. Sample deployment.
           </p>
-          <p className="text-gray-600 text-xs mt-1 sm:mt-0">
-            Powered by the Office of Hon. John Setor Dumelo
-          </p>
+          <p className="text-gray-600 text-xs mt-1 sm:mt-0">{demoContent.copyright.poweredBy}</p>
         </div>
       </div>
     </footer>

@@ -23,9 +23,12 @@ import {
   Mail,
   ChevronUp,
   X,
+  User,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { mediaUrl } from '@/lib/mediaUrl';
+import { demoContent } from '@/lib/demoContent';
+import MpDemoProfileFigure from '@/components/MpDemoProfileFigure';
 
 interface Announcement {
   id: string;
@@ -279,8 +282,8 @@ function HeroSection({ onNext }: { onNext: () => void }) {
         <div className="grid lg:grid-cols-2 gap-5 lg:gap-12 items-center">
           {/* Mobile MP photo — large portrait card (not a small circle) */}
           <motion.div {...childFade(0)} className="lg:hidden flex justify-center order-first">
-            <div className="w-[min(92vw,340px)] aspect-[3/4] max-h-[min(52dvh,420px)] rounded-2xl overflow-hidden border-4 border-ghana-gold/35 shadow-2xl ring-2 ring-white/10">
-              <img src="/mp_image.png" alt="Hon. John Setor Dumelo" className="w-full h-full object-cover object-top" />
+            <div className="relative w-[min(92vw,340px)] aspect-[3/4] max-h-[min(52dvh,420px)] rounded-2xl overflow-hidden border-4 border-ghana-gold/35 shadow-2xl ring-2 ring-white/10">
+              <MpDemoProfileFigure variant="heroMobile" className="absolute inset-0 w-full h-full" />
             </div>
           </motion.div>
 
@@ -292,7 +295,7 @@ function HeroSection({ onNext }: { onNext: () => void }) {
             </div>
 
             <p className="text-ghana-gold/95 text-[11px] sm:text-xs font-semibold tracking-wide uppercase text-center lg:text-left mb-1 lg:hidden">
-              Ayawaso West Wuogon
+              {demoContent.mp.heroEyebrowMobile}
             </p>
 
             <h1 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-3 lg:mb-6 text-center lg:text-left">
@@ -303,10 +306,10 @@ function HeroSection({ onNext }: { onNext: () => void }) {
             </h1>
 
             <p className="text-white/85 text-xs leading-relaxed text-center lg:text-left mx-auto lg:mx-0 mb-4 block sm:hidden max-w-xl">
-              Track projects, opportunities, and news — stay connected with your MP&apos;s office.
+              {demoContent.mp.welcomeShort}
             </p>
             <p className="text-white/85 text-xs sm:text-sm lg:text-lg mb-4 sm:mb-5 lg:mb-8 leading-relaxed max-w-xl text-center lg:text-left mx-auto lg:mx-0 hidden sm:block">
-              Welcome to the platform of Hon. John Setor Dumelo, MP for Ayawaso West Wuogon. Track projects, access opportunities, and stay connected.
+              {demoContent.mp.welcomeLong}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -322,11 +325,11 @@ function HeroSection({ onNext }: { onNext: () => void }) {
           {/* Desktop MP photo */}
           <motion.div {...childFade(0.3)} className="hidden lg:block">
             <div className="relative">
-              <div className="w-[400px] h-[480px] mx-auto relative">
-                <img src="/mp_image.png" alt="Hon. John Setor Dumelo" className="w-full h-full object-cover rounded-3xl shadow-2xl" />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent rounded-b-3xl p-6">
-                  <p className="text-white font-bold text-xl">Hon. John Setor Dumelo</p>
-                  <p className="text-ghana-gold text-sm">MP for Ayawaso West Wuogon</p>
+              <div className="w-[400px] h-[480px] mx-auto relative rounded-3xl overflow-hidden shadow-2xl">
+                <MpDemoProfileFigure variant="heroDesktop" className="w-full h-full" />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 pointer-events-none">
+                  <p className="text-white font-bold text-xl">{demoContent.mp.displayName}</p>
+                  <p className="text-ghana-gold text-sm">{demoContent.mp.profileSubtitle}</p>
                 </div>
               </div>
               <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-4 top-16 bg-white rounded-xl shadow-xl p-3">
@@ -814,7 +817,9 @@ function ConnectSection({ stories }: { stories: SuccessStory[] }) {
                   <Quote size={24} className="text-ghana-gold/30 mb-2" />
                   <p className="text-gray-600 text-xs leading-relaxed flex-1 italic">&ldquo;{story.story}&rdquo;</p>
                   <div className="flex items-center space-x-3 mt-4 pt-3 border-t border-gray-100">
-                    <img src={story.image} alt={story.name} className="w-9 h-9 rounded-full object-cover" />
+                    <div className="w-9 h-9 rounded-full bg-ghana-green/12 flex items-center justify-center shrink-0" aria-hidden>
+                      <User size={18} className="text-ghana-green" />
+                    </div>
                     <div>
                       <p className="font-semibold text-ghana-black text-sm">{story.name}</p>
                       <p className="text-gray-400 text-[10px]">Beneficiary, {story.year}</p>
@@ -846,10 +851,13 @@ function ConnectSection({ stories }: { stories: SuccessStory[] }) {
           </motion.div>
 
           <div className="mt-6 pt-5 border-t border-white/10 flex flex-wrap gap-x-6 gap-y-2 text-white/50 text-[11px]">
-            <span className="flex items-center gap-1"><MapPin size={12} /> Ayawaso West Wuogon, Accra</span>
-            <span className="flex items-center gap-1"><Phone size={12} /> +233 (0) 30 XXX XXXX</span>
-            <span className="flex items-center gap-1"><Mail size={12} /> info@constituency.gov.gh</span>
-            <span className="ml-auto" suppressHydrationWarning>&copy; {new Date().getFullYear()} Office of Hon. John Setor Dumelo, MP</span>
+            <span className="flex items-center gap-1"><MapPin size={12} /> {demoContent.constituency.mapLine}</span>
+            <span className="flex items-center gap-1"><Phone size={12} /> {demoContent.contact.phoneDisplay}</span>
+            <span className="flex items-center gap-1"><Mail size={12} /> {demoContent.contact.emailDisplay}</span>
+            <span className="ml-auto flex items-center gap-2" suppressHydrationWarning>
+              <span className="text-white/40 border border-white/20 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">{demoContent.badges.system}</span>
+              <span>&copy; {new Date().getFullYear()} {demoContent.copyright.line}</span>
+            </span>
           </div>
         </div>
       </div>

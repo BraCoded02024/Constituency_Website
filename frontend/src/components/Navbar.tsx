@@ -17,7 +17,9 @@ import {
   User,
   Image,
   LayoutDashboard,
+  Landmark,
 } from 'lucide-react';
+import { demoContent } from '@/lib/demoContent';
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home },
@@ -25,7 +27,7 @@ const navLinks = [
   { href: '/opportunities', label: 'Opportunities', icon: Briefcase },
   { href: '/projects', label: 'Projects', icon: FolderKanban },
   { href: '/events', label: 'Events', icon: CalendarDays },
-  { href: '/about', label: 'About MP', icon: User },
+  { href: '/about', label: demoContent.nav.aboutLinkLabel, icon: User },
   { href: '/gallery', label: 'Gallery', icon: Image },
 ];
 
@@ -51,13 +53,22 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 group"
+            aria-label={`${demoContent.constituency.name} — ${demoContent.badges.system}`}
+          >
             <div className="w-10 h-10 bg-ghana-gold rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              <span className="text-ghana-green font-bold text-lg">JD</span>
+              <Landmark size={22} className="text-ghana-green" strokeWidth={2} aria-hidden />
             </div>
-            <div className="hidden sm:block">
-              <p className="text-white font-bold text-lg leading-tight">Ayawaso West Wuogon</p>
-              <p className="text-ghana-gold text-xs">Office of Hon. John Setor Dumelo</p>
+            <div className="hidden sm:flex sm:items-center sm:gap-2">
+              <div>
+                <p className="text-white font-bold text-lg leading-tight">{demoContent.constituency.name}</p>
+                <p className="text-ghana-gold text-xs">{demoContent.office.navTagline}</p>
+              </div>
+              <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/55 border border-white/25 rounded px-2 py-0.5">
+                {demoContent.badges.mode}
+              </span>
             </div>
           </Link>
 

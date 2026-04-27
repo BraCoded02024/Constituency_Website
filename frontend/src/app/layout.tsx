@@ -4,6 +4,7 @@ import './globals.css';
 import Providers from '@/components/Providers';
 import LayoutShell from '@/components/LayoutShell';
 import { Toaster } from 'react-hot-toast';
+import { demoMetadata } from '@/lib/demoContent';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -16,9 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Ayawaso West Wuogon Constituency - Hon. John Setor Dumelo, MP',
-  description:
-    'Official constituency platform of Hon. John Setor Dumelo, Member of Parliament for Ayawaso West Wuogon. Join constituency updates, share concerns, track projects, and stay connected.',
+  title: demoMetadata.title,
+  description: demoMetadata.description,
 };
 
 export default function RootLayout({

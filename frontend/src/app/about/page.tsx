@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { fadeInUp, staggerContainer, staggerItem, slideInLeft, slideInRight } from '@/lib/motion';
+import { demoContent } from '@/lib/demoContent';
+import MpDemoProfileFigure from '@/components/MpDemoProfileFigure';
 
 const achievements = [
   { value: '45+', label: 'Projects Completed', icon: Building },
@@ -50,21 +52,12 @@ const priorities = [
   },
 ];
 
-const timeline = [
-  { year: '2024', event: 'Elected as Member of Parliament', details: 'Won the Ayawaso West Wuogon constituency seat with a strong mandate from the people.' },
-  { year: '2021', event: 'Launched Constituency Development Fund', details: 'Established a transparent fund for community development projects.' },
-  { year: '2022', event: 'Completed 20 Borehole Projects', details: 'Provided clean water access to 20 underserved communities.' },
-  { year: '2023', event: 'Education Scholarship Program', details: 'Awarded 200+ scholarships to students from SHS to university level.' },
-  { year: '2024', event: 'Road Rehabilitation Phase 1', details: 'Completed first phase of constituency-wide road rehabilitation.' },
-  { year: '2025', event: 'ICT Training Centers', details: 'Opened 3 community ICT centers with modern computer labs.' },
-];
-
 export default function AboutPage() {
   return (
     <>
       <PageHeader
-        title="About the MP"
-        subtitle="Learn about Hon. John Setor Dumelo, his vision, and commitment to Ayawaso West Wuogon"
+        title={demoContent.about.pageTitle}
+        subtitle={demoContent.about.pageSubtitle}
         icon={User}
       />
 
@@ -74,39 +67,26 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div variants={slideInLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               <div className="relative">
-                <img
-                  src="/mp_image.png"
-                  alt="Hon. Member of Parliament"
-                  className="w-full max-w-md mx-auto rounded-3xl shadow-2xl"
-                />
+                <div className="w-full max-w-md mx-auto h-[420px] rounded-3xl shadow-2xl overflow-hidden">
+                  <MpDemoProfileFigure variant="about" className="w-full h-full" />
+                </div>
                 <div className="absolute -bottom-6 -right-6 bg-ghana-green text-white p-6 rounded-2xl shadow-xl max-w-[200px] hidden md:block">
                   <Award size={24} className="text-ghana-gold mb-2" />
-                  <p className="font-semibold text-sm">Member of Parliament</p>
-                  <p className="text-white/70 text-xs mt-1">Ayawaso West Wuogon</p>
+                  <p className="font-semibold text-sm">{demoContent.about.profileFloatingTitle}</p>
+                  <p className="text-white/70 text-xs mt-1">{demoContent.about.profileFloatingSubtitle}</p>
                 </div>
               </div>
             </motion.div>
 
             <motion.div variants={slideInRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <span className="text-ghana-green font-semibold text-sm uppercase tracking-wider">Meet Your Representative</span>
-              <h2 className="text-3xl md:text-4xl font-bold text-ghana-black mt-2 mb-6">Hon. John Setor Dumelo</h2>
+              <span className="text-ghana-green font-semibold text-sm uppercase tracking-wider">{demoContent.about.sectionEyebrow}</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-ghana-black mt-2 mb-6">{demoContent.about.profileCardTitle}</h2>
+              <p className="text-gray-500 text-sm mb-4">{demoContent.mp.profileSubtitle}</p>
 
               <div className="space-y-4 text-gray-600 leading-relaxed">
-                <p>
-                  Hon. John Setor Dumelo is the Member of Parliament for Ayawaso West Wuogon Constituency. 
-                  A passionate advocate for community development, he is committed to bridging the gap between 
-                  government and the people, ensuring that every voice is heard and every community receives the 
-                  resources needed for growth.
-                </p>
-                <p>
-                  With a deep connection to the people of Ayawaso West Wuogon, Hon. Dumelo brings energy, vision, 
-                  and a hands-on approach to serving the constituency. He believes in transparent governance, 
-                  inclusive development, and empowering the youth to become future leaders.
-                </p>
-                <p>
-                  Together, we can build a constituency that serves as a model of development, unity, and progress 
-                  for the entire nation. Your concerns are his priority, and your aspirations drive his work in Parliament.
-                </p>
+                {demoContent.about.paragraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
               </div>
 
               <div className="flex flex-wrap gap-3 mt-8">
@@ -201,8 +181,8 @@ export default function AboutPage() {
             className="relative"
           >
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-ghana-green/20" />
-            {timeline.map((item, index) => (
-              <motion.div key={item.year} variants={staggerItem} className="relative pl-20 pb-10 last:pb-0">
+            {demoContent.about.timeline.map((item) => (
+              <motion.div key={`${item.year}-${item.event}`} variants={staggerItem} className="relative pl-20 pb-10 last:pb-0">
                 <div className="absolute left-5 w-7 h-7 bg-ghana-green rounded-full flex items-center justify-center shadow-lg">
                   <div className="w-2.5 h-2.5 bg-ghana-gold rounded-full" />
                 </div>
