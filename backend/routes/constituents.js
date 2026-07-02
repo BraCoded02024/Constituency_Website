@@ -29,15 +29,19 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
 router.post('/', async (req, res) => {
   const db = getDb();
-  const { rows: existing } = await db.query('SELECT id FROM constituents WHERE phone = $1', [req.body.phone]);
+  const { fullName, full_name, phone, email, community, age, gender, occupation } = req.body;
+  const name = fullName || full_name;
+  if (!name || !phone || !community || !gender) {
+    return res.status(400).json({ error: 'Full name, phone, community, and gender are required' });
+  }
+
+  const { rows: existing } = await db.query('SELECT id FROM constituents WHERE phone = $1', [phone]);
   if (existing[0]) return res.status(400).json({ error: 'Phone number already registered' });
 
   const id = uuidv4();
-  const { fullName, full_name, phone, email, community, age, gender, occupation } = req.body;
-  const name = fullName || full_name;
   const { rows } = await db.query(
     'INSERT INTO constituents (id,full_name,phone,email,community,age,gender,occupation,registered_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',
-    [id, name, phone, email, community, age, gender, occupation, new Date().toISOString().split('T')[0]]
+    [id, name, phone, email || '', community, age || null, gender, occupation || '', new Date().toISOString().split('T')[0]]
   );
   res.status(201).json(constituent(rows[0]));
 });
