@@ -43,7 +43,7 @@ export default function AdminVolunteersPage() {
     return name.includes(search.toLowerCase()) || v.phone.includes(search);
   });
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-ghana-green" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-npp-blue" /></div>;
 
   return (
     <div className="space-y-4">
@@ -53,7 +53,7 @@ export default function AdminVolunteersPage() {
 
       <div className="relative">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" />
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">

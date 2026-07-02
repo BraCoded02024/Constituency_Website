@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import {
   Users, AlertTriangle, FolderKanban, Megaphone,
-  Calendar, UserPlus, TrendingUp, Clock, CheckCircle2, Loader2, Wrench, Star, ChevronRight,
+  Calendar, UserPlus, TrendingUp, Clock, CheckCircle2, Loader2, Wrench, Star, ChevronRight, UserCheck,
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -25,6 +25,7 @@ interface DashboardStats {
   totalGalleryItems: number;
   totalSuccessStories: number;
   totalServices: number;
+  totalDelegates: number;
   recentRegistrations: { id: string; fullName: string; community: string; registeredAt: string }[];
   recentConcerns: { id: string; name: string; subject: string; status: string; priority: string; submittedAt: string }[];
   projectProgress: { id: string; title: string; progress: number; status: string }[];
@@ -45,7 +46,7 @@ export default function AdminOverviewPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-ghana-green" />
+        <Loader2 className="w-8 h-8 animate-spin text-npp-blue" />
       </div>
     );
   }
@@ -54,8 +55,9 @@ export default function AdminOverviewPage() {
 
   const cards: { label: string; value: number; icon: typeof Users; color: string; href: string }[] = [
     { label: 'Constituents', value: stats.totalConstituents, icon: Users, color: 'bg-blue-500', href: '/admin/constituents' },
+    { label: 'Delegates', value: stats.totalDelegates ?? 0, icon: UserCheck, color: 'bg-npp-blue', href: '/admin/delegates' },
     { label: 'Concerns', value: stats.totalConcerns, icon: AlertTriangle, color: 'bg-orange-500', href: '/admin/concerns' },
-    { label: 'Projects', value: stats.totalProjects, icon: FolderKanban, color: 'bg-ghana-green', href: '/admin/projects' },
+    { label: 'Projects', value: stats.totalProjects, icon: FolderKanban, color: 'bg-npp-red', href: '/admin/projects' },
     { label: 'Announcements', value: stats.totalAnnouncements, icon: Megaphone, color: 'bg-purple-500', href: '/admin/announcements' },
     { label: 'Events', value: stats.totalEvents, icon: Calendar, color: 'bg-pink-500', href: '/admin/events' },
     { label: 'Volunteers', value: stats.totalVolunteers, icon: UserPlus, color: 'bg-teal-500', href: '/admin/volunteers' },
@@ -88,14 +90,14 @@ export default function AdminOverviewPage() {
           <Link
             key={card.label}
             href={card.href}
-            className="group bg-white rounded-xl border border-gray-100 p-4 flex items-start gap-3 shadow-sm hover:border-ghana-green/35 hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ghana-green/40 focus-visible:ring-offset-2"
+            className="group bg-white rounded-xl border border-gray-100 p-4 flex items-start gap-3 shadow-sm hover:border-npp-blue/35 hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-npp-blue/40 focus-visible:ring-offset-2"
           >
             <div className={`${card.color} w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
               <card.icon size={18} className="text-white" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-2xl font-bold text-gray-900 tabular-nums">{card.value}</p>
-              <p className="text-xs text-gray-500 group-hover:text-ghana-green font-medium flex items-center gap-0.5">
+              <p className="text-xs text-gray-500 group-hover:text-npp-blue font-medium flex items-center gap-0.5">
                 {card.label}
                 <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-0.5 group-hover:translate-x-0 transition-all" />
               </p>
@@ -127,7 +129,7 @@ export default function AdminOverviewPage() {
                 className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50/80 transition-colors group"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate group-hover:text-ghana-green">{c.subject}</p>
+                  <p className="text-sm font-medium text-gray-900 truncate group-hover:text-npp-blue">{c.subject}</p>
                   <p className="text-xs text-gray-500">{c.name} &middot; {c.submittedAt}</p>
                 </div>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusColor(c.status)}`}>
@@ -136,7 +138,7 @@ export default function AdminOverviewPage() {
                 <span className={`text-[10px] font-semibold ${priorityColor(c.priority)}`}>
                   {c.priority}
                 </span>
-                <ChevronRight size={14} className="text-gray-300 group-hover:text-ghana-green shrink-0" />
+                <ChevronRight size={14} className="text-gray-300 group-hover:text-npp-blue shrink-0" />
               </Link>
             ))}
             {stats.recentConcerns.length === 0 && (
@@ -147,7 +149,7 @@ export default function AdminOverviewPage() {
 
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col min-h-0">
           <Link href="/admin/projects" className="p-4 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50/50 transition-colors rounded-t-xl">
-            <FolderKanban size={16} className="text-ghana-green" />
+            <FolderKanban size={16} className="text-npp-blue" />
             <h3 className="font-semibold text-sm text-gray-900">Project progress</h3>
             <ChevronRight size={14} className="text-gray-300 ml-auto" />
           </Link>
@@ -159,15 +161,15 @@ export default function AdminOverviewPage() {
                 className="block px-4 py-3 hover:bg-gray-50/80 transition-colors group"
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <p className="text-sm font-medium text-gray-900 truncate group-hover:text-ghana-green">{p.title}</p>
-                  <span className="text-xs font-semibold text-ghana-green flex items-center gap-1 tabular-nums">
+                  <p className="text-sm font-medium text-gray-900 truncate group-hover:text-npp-blue">{p.title}</p>
+                  <span className="text-xs font-semibold text-npp-blue flex items-center gap-1 tabular-nums">
                     {p.progress}%
-                    <ChevronRight size={12} className="text-gray-300 group-hover:text-ghana-green" />
+                    <ChevronRight size={12} className="text-gray-300 group-hover:text-npp-blue" />
                   </span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
                   <div
-                    className="bg-ghana-green h-1.5 rounded-full transition-all"
+                    className="bg-npp-blue h-1.5 rounded-full transition-all"
                     style={{ width: `${p.progress}%` }}
                   />
                 </div>
@@ -196,10 +198,10 @@ export default function AdminOverviewPage() {
                   {r.fullName.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate group-hover:text-ghana-green">{r.fullName}</p>
+                  <p className="text-sm font-medium text-gray-900 truncate group-hover:text-npp-blue">{r.fullName}</p>
                   <p className="text-xs text-gray-500">{r.community} &middot; {r.registeredAt}</p>
                 </div>
-                <ChevronRight size={14} className="text-gray-300 group-hover:text-ghana-green shrink-0" />
+                <ChevronRight size={14} className="text-gray-300 group-hover:text-npp-blue shrink-0" />
               </Link>
             ))}
             {stats.recentRegistrations.length === 0 && (
@@ -221,7 +223,7 @@ export default function AdminOverviewPage() {
                 href={`/admin/concerns?category=${encodeURIComponent(cat)}`}
                 className="flex items-center justify-between gap-3 rounded-lg px-2 -mx-2 py-2 hover:bg-purple-50/60 transition-colors group"
               >
-                <span className="text-sm text-gray-600 truncate group-hover:text-ghana-green font-medium">{cat}</span>
+                <span className="text-sm text-gray-600 truncate group-hover:text-npp-blue font-medium">{cat}</span>
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="w-24 bg-gray-100 rounded-full h-1.5 overflow-hidden">
                     <div
@@ -230,7 +232,7 @@ export default function AdminOverviewPage() {
                     />
                   </div>
                   <span className="text-xs font-semibold text-gray-700 w-6 text-right tabular-nums">{count}</span>
-                  <ChevronRight size={12} className="text-gray-300 group-hover:text-ghana-green" />
+                  <ChevronRight size={12} className="text-gray-300 group-hover:text-npp-blue" />
                 </div>
               </Link>
             ))}

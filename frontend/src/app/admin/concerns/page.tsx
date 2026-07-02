@@ -138,7 +138,7 @@ export default function AdminConcernsPage() {
     return 'bg-green-100 text-green-700';
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-ghana-green" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-npp-blue" /></div>;
 
   return (
     <div className="space-y-4">
@@ -152,7 +152,7 @@ export default function AdminConcernsPage() {
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <div className="flex gap-2 overflow-x-auto pb-1">
           {['all', ...STATUSES].map(s => (
-            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${filter === s ? 'bg-ghana-green text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
+            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${filter === s ? 'bg-npp-blue text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
               {s === 'all' ? 'All' : s} {s === 'all' ? `(${items.length})` : `(${items.filter(c => c.status === s).length})`}
             </button>
           ))}
@@ -162,7 +162,7 @@ export default function AdminConcernsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search subject, name, category…"
-            className="w-full pl-3 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none"
+            className="w-full pl-3 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none"
           />
         </div>
       </div>
@@ -198,10 +198,10 @@ export default function AdminConcernsPage() {
                 <div className="mt-3 space-y-3">
                   <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{item.description}</p>
                   <div className="flex gap-2 flex-wrap">
-                    <select value={item.status} onChange={e => handleStatusChange(item.id, e.target.value)} className="text-xs px-2 py-1.5 rounded-lg border border-gray-200 focus:border-ghana-green outline-none">
+                    <select value={item.status} onChange={e => handleStatusChange(item.id, e.target.value)} className="text-xs px-2 py-1.5 rounded-lg border border-gray-200 focus:border-npp-blue outline-none">
                       {STATUSES.map(s => <option key={s}>{s}</option>)}
                     </select>
-                    <select value={item.priority} onChange={e => handlePriorityChange(item.id, e.target.value)} className="text-xs px-2 py-1.5 rounded-lg border border-gray-200 focus:border-ghana-green outline-none">
+                    <select value={item.priority} onChange={e => handlePriorityChange(item.id, e.target.value)} className="text-xs px-2 py-1.5 rounded-lg border border-gray-200 focus:border-npp-blue outline-none">
                       {PRIORITIES.map(p => <option key={p}>{p}</option>)}
                     </select>
                   </div>
@@ -209,7 +209,7 @@ export default function AdminConcernsPage() {
                     <div className="space-y-2">
                       <p className="text-xs font-semibold text-gray-600">Responses ({item.responses.length})</p>
                       {item.responses.map(r => (
-                        <div key={r.id} className="bg-ghana-green/5 border border-ghana-green/10 rounded-lg p-3">
+                        <div key={r.id} className="bg-npp-blue/5 border border-npp-blue/10 rounded-lg p-3">
                           <p className="text-sm text-gray-800">{r.message}</p>
                           <p className="text-[10px] text-gray-500 mt-1">{r.respondedBy} &middot; {new Date(r.respondedAt).toLocaleString()}</p>
                         </div>
@@ -221,15 +221,15 @@ export default function AdminConcernsPage() {
 
               {replyId === item.id && (
                 <div className="mt-3 bg-gray-50 rounded-lg p-3 space-y-2">
-                  <textarea value={replyText} onChange={e => setReplyText(e.target.value)} placeholder="Type your response to the constituent..." rows={3} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-ghana-green outline-none resize-none" />
+                  <textarea value={replyText} onChange={e => setReplyText(e.target.value)} placeholder="Type your response to the constituent..." rows={3} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-npp-blue outline-none resize-none" />
                   <div className="flex items-center justify-between">
-                    <select value={replyStatus} onChange={e => setReplyStatus(e.target.value)} className="text-xs px-2 py-1.5 rounded-lg border border-gray-200 focus:border-ghana-green outline-none">
+                    <select value={replyStatus} onChange={e => setReplyStatus(e.target.value)} className="text-xs px-2 py-1.5 rounded-lg border border-gray-200 focus:border-npp-blue outline-none">
                       <option value="">Keep current status</option>
                       {STATUSES.map(s => <option key={s}>{s}</option>)}
                     </select>
                     <div className="flex gap-2">
                       <button onClick={() => setReplyId(null)} className="px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-200">Cancel</button>
-                      <button onClick={() => handleReply(item.id)} disabled={sending} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-ghana-green text-white hover:bg-ghana-green/90 disabled:opacity-50">
+                      <button onClick={() => handleReply(item.id)} disabled={sending} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-npp-blue text-white hover:bg-npp-blue/90 disabled:opacity-50">
                         {sending ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                         Send
                       </button>

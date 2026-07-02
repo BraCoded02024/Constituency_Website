@@ -188,6 +188,40 @@ export const api = {
       authFetcher(`/volunteers/${id}`, { method: 'DELETE' }),
   },
 
+  delegates: {
+    getAll: () => authFetcher('/delegates'),
+    getById: (id: string) => authFetcher(`/delegates/${id}`),
+    create: (data: Record<string, unknown>) =>
+      authFetcher('/delegates', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      authFetcher(`/delegates/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id: string) =>
+      authFetcher(`/delegates/${id}`, { method: 'DELETE' }),
+    import: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const token = getToken();
+      const res = await fetch(`${getApiBase()}/delegates/import`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+      if (res.status === 401 || res.status === 403) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('admin_token');
+          localStorage.removeItem('admin_user');
+          window.location.href = '/admin/login';
+        }
+        throw new Error('Session expired');
+      }
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ error: 'Import failed' }));
+        throw new Error(error.error || 'Import failed');
+      }
+      return res.json() as Promise<{ imported: number; skipped: number; total: number }>;
+    },
+  },
+
   dashboard: {
     getStats: () => authFetcher('/dashboard/stats'),
   },

@@ -50,7 +50,7 @@ export default function EventsPage() {
             </span>
           </div>
           <div className="absolute bottom-3 left-3 bg-white rounded-xl p-3 shadow-lg text-center min-w-[60px]">
-            <p className="text-ghana-red font-bold text-xl leading-none">
+            <p className="text-npp-red font-bold text-xl leading-none">
               {new Date(event.date).getDate()}
             </p>
             <p className="text-gray-500 text-xs font-medium uppercase">
@@ -59,17 +59,17 @@ export default function EventsPage() {
           </div>
         </div>
         <div className="p-6 flex-1 flex flex-col">
-          <h3 className="font-semibold text-xl text-ghana-black mb-2 group-hover:text-ghana-green transition-colors">
+          <h3 className="font-semibold text-xl text-gray-900 mb-2 group-hover:text-npp-blue transition-colors">
             {event.title}
           </h3>
           <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">{event.description}</p>
           <div className="space-y-2 pt-4 border-t border-gray-100">
             <div className="flex items-center text-sm text-gray-500">
-              <Clock size={14} className="mr-2 text-ghana-green" />
+              <Clock size={14} className="mr-2 text-npp-blue" />
               <span>{event.time}</span>
             </div>
             <div className="flex items-center text-sm text-gray-500">
-              <MapPin size={14} className="mr-2 text-ghana-green" />
+              <MapPin size={14} className="mr-2 text-npp-blue" />
               <span>{event.location}</span>
             </div>
           </div>
@@ -91,8 +91,8 @@ export default function EventsPage() {
           {/* Upcoming Events */}
           {upcoming.length > 0 && (
             <div className="mb-16">
-              <h2 className="text-2xl font-bold text-ghana-black mb-6 flex items-center">
-                <div className="w-3 h-3 bg-ghana-green rounded-full mr-3 animate-pulse" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-3 h-3 bg-npp-blue rounded-full mr-3 animate-pulse" />
                 Upcoming Events
               </h2>
               <motion.div

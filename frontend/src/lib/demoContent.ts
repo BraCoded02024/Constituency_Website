@@ -1,86 +1,95 @@
 /**
- * Centralized demo / placeholder copy for the public UI.
+ * Centralized content for the NPP Political Party Management System.
  * Replace imports of this module with CMS or env-driven values when going to production.
  */
 
 export const demoMetadata = {
-  title: 'Sample Constituency — Demo Constituency Platform',
+  title: 'New Patriotic Party — Constituency Management Platform',
   description:
-    'Demonstration constituency engagement platform. Explore announcements, projects, events, and community tools using neutral sample data.',
+    'Official constituency management platform for the New Patriotic Party (NPP). Manage announcements, projects, events, delegates, and community engagement.',
 } as const;
 
 export const demoContent = {
-  badges: {
-    system: 'Demo System',
-    mode: 'Demo Mode',
-  },
   constituency: {
-    name: 'Sample Constituency',
-    /** Short location line for footers / contact strips (no real address). */
-    officeAddressLine: 'Constituency liaison office (demo — replace in deployment)',
-    mapLine: 'Sample Constituency (demo)',
+    name: 'New Patriotic Party',
+    officeAddressLine: 'NPP Constituency Office, Ring Road Central, Accra',
+    mapLine: 'NPP Constituency Office',
   },
   mp: {
-    displayName: 'Member of Parliament (Demo)',
-    profileSubtitle: 'Demo Profile – Constituency Representation',
-    profileImageAlt: 'Demo representative profile placeholder',
-    heroEyebrowMobile: 'Sample Constituency',
+    displayName: 'Constituency Chairman',
+    profileSubtitle: 'NPP — Development in Freedom',
+    profileImageAlt: 'Justina Owusu-Banahene, NPP representative',
+    heroEyebrowMobile: 'New Patriotic Party',
     welcomeShort:
-      'Track projects, opportunities, and news — stay connected with your constituency office (demo).',
+      'Track party projects, opportunities, and news — stay connected with NPP constituency activities.',
     welcomeLong:
-      'Welcome to this demonstration constituency platform. Track projects, access opportunities, and stay engaged with community programmes — swap this copy when you connect real data.',
+      'Welcome to the New Patriotic Party constituency platform. Track projects, access opportunities, register as a delegate, and stay engaged with party programmes and community development initiatives.',
   },
   office: {
-    navTagline: 'Constituency office (demo)',
-    footerTagline: 'Constituency office (demo)',
+    navTagline: 'Development in Freedom',
+    footerTagline: 'Development in Freedom',
     footerDescription:
-      'Demonstration deployment for constituency engagement. Replace branding, contact details, and content before production use.',
+      'Official NPP constituency engagement platform. Manage party activities, delegate registration, community projects, and constituency development programmes.',
   },
   contact: {
-    phoneDisplay: '+233 (0) 000 000 000',
-    emailDisplay: 'demo@example.invalid',
+    phoneDisplay: '+233 30 277 0000',
+    phoneHref: 'tel:+233302770000',
+    emailDisplay: 'info@npp-constituency.org.gh',
+    emailHref: 'mailto:info@npp-constituency.org.gh',
+    officeHours: 'Mon – Fri: 8:00 AM – 5:00 PM',
+  },
+  social: {
+    website: '',
+    whatsapp: '',
+    facebook: '',
+    youtube: '',
+  },
+  register: {
+    pageTitle: 'Join the constituency updates',
+    pageSubtitle:
+      'Share your details so the constituency office can reach you with programmes, events, and opportunities.',
+    successTitle: "You're on the list",
   },
   copyright: {
-    line: 'Demo Constituency Platform — Sample Constituency',
-    poweredBy: 'Demonstration build — replace with your organisation',
+    line: 'New Patriotic Party — Constituency Platform',
   },
   about: {
     pageTitle: 'About',
     pageSubtitle:
-      'Neutral demo profile for constituency representation — replace with your representative\'s story.',
-    sectionEyebrow: 'Representative profile (demo)',
-    profileCardTitle: 'Member of Parliament (Demo)',
-    profileFloatingTitle: 'Member of Parliament (Demo)',
-    profileFloatingSubtitle: 'Sample Constituency',
+      'Learn about the New Patriotic Party constituency leadership and development initiatives.',
+    sectionEyebrow: 'Party Leadership',
+    profileCardTitle: 'Constituency Chairman',
+    profileFloatingTitle: 'Constituency Chairman',
+    profileFloatingSubtitle: 'New Patriotic Party',
     paragraphs: [
-      'This page demonstrates how a Member of Parliament profile can be presented alongside constituency priorities. All biographical detail here is generic and intended for layout and UX review only.',
-      'A production deployment would summarise the representative\'s focus areas, accessibility, and how residents can engage with the office — without relying on demo placeholders.',
-      'Use the admin tools to publish real announcements, projects, and programmes when you are ready to go live.',
+      'The New Patriotic Party (NPP) is committed to development in freedom, championing democratic governance, economic growth, and social progress across all constituencies.',
+      'This platform enables transparent tracking of constituency projects, programmes, and engagement with party members, delegates, and the broader community.',
+      'Use the platform to stay informed about party activities, register as a delegate, report concerns, and participate in community development initiatives.',
     ],
     timeline: [
       {
         year: '2024',
-        event: 'Constituency engagement programme (demo)',
+        event: 'Digital Constituency Platform Launch',
         details:
-          'Sample milestone: launch of a structured channel for community feedback and development updates.',
+          'Launch of the modern NPP constituency management platform for transparent governance and party engagement.',
       },
       {
         year: '2023',
-        event: 'Infrastructure planning cycle (demo)',
+        event: 'Infrastructure Development Programme',
         details:
-          'Sample milestone: prioritisation of local infrastructure projects for transparent tracking.',
+          'Major constituency infrastructure projects initiated — roads, schools, and healthcare facilities.',
       },
       {
         year: '2022',
-        event: 'Youth and skills initiative (demo)',
+        event: 'Youth Empowerment Initiative',
         details:
-          'Sample milestone: pilot programme for training, mentorship, and opportunity signposting.',
+          'Launch of youth training, mentorship, and employment programmes across the constituency.',
       },
       {
         year: '2021',
-        event: 'Office systems modernisation (demo)',
+        event: 'Party Modernisation Drive',
         details:
-          'Sample milestone: move to digital registration, case tracking, and public communications.',
+          'Adoption of digital tools for delegate management, voter registration, and constituency operations.',
       },
     ],
   },

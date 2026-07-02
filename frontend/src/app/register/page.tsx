@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import PageHeader from '@/components/PageHeader';
 import { fadeInUp } from '@/lib/motion';
 import { api } from '@/lib/api';
+import { demoContent } from '@/lib/demoContent';
 
 const communities = [
   'Abokobi', 'Agbogba', 'Dome', 'Pantang', 'Haatso', 'Kwabenya',
@@ -52,19 +53,19 @@ export default function RegisterPage() {
   if (submitted) {
     return (
       <>
-        <PageHeader title="You&apos;re on the list" subtitle="Join the constituency updates" icon={UserPlus} />
+        <PageHeader title={demoContent.register.successTitle} subtitle={demoContent.register.pageTitle} icon={UserPlus} />
         <div className="py-20 bg-gray-50">
           <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="max-w-lg mx-auto text-center px-4">
-            <div className="w-20 h-20 bg-ghana-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={40} className="text-ghana-green" />
+            <div className="w-20 h-20 bg-npp-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={40} className="text-npp-blue" />
             </div>
-            <h2 className="text-2xl font-bold text-ghana-black mb-4">You&apos;re subscribed to updates!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">You&apos;re subscribed to updates!</h2>
             <p className="text-gray-600 mb-8">
               Thank you, {form.fullName}. You&apos;ll get constituency updates on programmes, events, and opportunities.
             </p>
             <button
               onClick={() => { setSubmitted(false); setForm({ fullName: '', phone: '', email: '', community: '', age: '', gender: '', occupation: '' }); }}
-              className="bg-ghana-green text-white px-6 py-3 rounded-xl font-semibold hover:bg-ghana-green-dark transition-colors"
+              className="bg-npp-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-npp-blue-dark transition-colors"
             >
               Add another person
             </button>
@@ -77,8 +78,8 @@ export default function RegisterPage() {
   return (
     <>
       <PageHeader
-        title="Join the constituency updates"
-        subtitle="Share your details so the MP&apos;s office can reach you with programmes, events, and opportunities."
+        title={demoContent.register.pageTitle}
+        subtitle={demoContent.register.pageSubtitle}
         icon={UserPlus}
       />
 
@@ -86,9 +87,9 @@ export default function RegisterPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div variants={fadeInUp} initial="hidden" animate="visible">
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-ghana-black mb-6 flex items-center">
-                <div className="w-10 h-10 bg-ghana-green/10 rounded-xl flex items-center justify-center mr-3">
-                  <UserPlus size={20} className="text-ghana-green" />
+              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-10 h-10 bg-npp-blue/10 rounded-xl flex items-center justify-center mr-3">
+                  <UserPlus size={20} className="text-npp-blue" />
                 </div>
                 Personal Information
               </h2>
@@ -193,7 +194,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-8 w-full bg-ghana-green text-white py-4 rounded-xl font-semibold text-lg hover:bg-ghana-green-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="mt-8 w-full bg-npp-blue text-white py-4 rounded-xl font-semibold text-lg hover:bg-npp-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 {loading ? 'Saving...' : 'Join the constituency updates'}
               </button>

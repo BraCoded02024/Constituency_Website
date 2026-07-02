@@ -70,8 +70,8 @@ export default function AboutPage() {
                 <div className="w-full max-w-md mx-auto h-[420px] rounded-3xl shadow-2xl overflow-hidden">
                   <MpDemoProfileFigure variant="about" className="w-full h-full" />
                 </div>
-                <div className="absolute -bottom-6 -right-6 bg-ghana-green text-white p-6 rounded-2xl shadow-xl max-w-[200px] hidden md:block">
-                  <Award size={24} className="text-ghana-gold mb-2" />
+                <div className="absolute -bottom-6 -right-6 bg-npp-blue text-white p-6 rounded-2xl shadow-xl max-w-[200px] hidden md:block">
+                  <Award size={24} className="text-npp-red mb-2" />
                   <p className="font-semibold text-sm">{demoContent.about.profileFloatingTitle}</p>
                   <p className="text-white/70 text-xs mt-1">{demoContent.about.profileFloatingSubtitle}</p>
                 </div>
@@ -79,8 +79,8 @@ export default function AboutPage() {
             </motion.div>
 
             <motion.div variants={slideInRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <span className="text-ghana-green font-semibold text-sm uppercase tracking-wider">{demoContent.about.sectionEyebrow}</span>
-              <h2 className="text-3xl md:text-4xl font-bold text-ghana-black mt-2 mb-6">{demoContent.about.profileCardTitle}</h2>
+              <span className="text-npp-blue font-semibold text-sm uppercase tracking-wider">{demoContent.about.sectionEyebrow}</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-6">{demoContent.about.profileCardTitle}</h2>
               <p className="text-gray-500 text-sm mb-4">{demoContent.mp.profileSubtitle}</p>
 
               <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -92,14 +92,14 @@ export default function AboutPage() {
               <div className="flex flex-wrap gap-3 mt-8">
                 <Link
                   href="/concerns"
-                  className="bg-ghana-green text-white px-6 py-3 rounded-xl font-semibold hover:bg-ghana-green-dark transition-colors flex items-center space-x-2"
+                  className="bg-npp-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-npp-blue-dark transition-colors flex items-center space-x-2"
                 >
                   <span>Reach Out</span>
                   <ArrowRight size={18} />
                 </Link>
                 <Link
                   href="/projects"
-                  className="bg-gray-100 text-ghana-black px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                  className="bg-gray-100 text-gray-900 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
                 >
                   View Projects
                 </Link>
@@ -110,7 +110,7 @@ export default function AboutPage() {
       </section>
 
       {/* Achievements */}
-      <section className="py-16 bg-ghana-green text-white">
+      <section className="py-16 bg-npp-blue text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             variants={staggerContainer}
@@ -122,7 +122,7 @@ export default function AboutPage() {
             {achievements.map((item) => (
               <motion.div key={item.label} variants={staggerItem} className="text-center">
                 <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <item.icon size={28} className="text-ghana-gold" />
+                  <item.icon size={28} className="text-npp-red" />
                 </div>
                 <p className="text-3xl font-bold mb-1">{item.value}</p>
                 <p className="text-white/70 text-sm">{item.label}</p>
@@ -136,10 +136,10 @@ export default function AboutPage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
-            <span className="text-ghana-green font-semibold text-sm uppercase tracking-wider">Focus Areas</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-ghana-black mt-2 mb-4">Key Priorities</h2>
+            <span className="text-npp-blue font-semibold text-sm uppercase tracking-wider">Focus Areas</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">Key Priorities</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Our development agenda focuses on four key pillars that drive constituency growth and improve quality of life.</p>
-            <div className="w-16 h-1 bg-ghana-gold mx-auto mt-4 rounded-full" />
+            <div className="w-16 h-1 bg-npp-red mx-auto mt-4 rounded-full" />
           </motion.div>
 
           <motion.div
@@ -155,7 +155,7 @@ export default function AboutPage() {
                   <div className={`w-14 h-14 ${item.color} rounded-xl flex items-center justify-center mb-4`}>
                     <item.icon size={24} />
                   </div>
-                  <h3 className="font-semibold text-lg text-ghana-black mb-2">{item.title}</h3>
+                  <h3 className="font-semibold text-lg text-gray-900 mb-2">{item.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
                 </div>
               </motion.div>
@@ -168,9 +168,9 @@ export default function AboutPage() {
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
-            <span className="text-ghana-green font-semibold text-sm uppercase tracking-wider">Our Journey</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-ghana-black mt-2 mb-4">Milestones</h2>
-            <div className="w-16 h-1 bg-ghana-gold mx-auto mt-4 rounded-full" />
+            <span className="text-npp-blue font-semibold text-sm uppercase tracking-wider">Our Journey</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">Milestones</h2>
+            <div className="w-16 h-1 bg-npp-red mx-auto mt-4 rounded-full" />
           </motion.div>
 
           <motion.div
@@ -180,15 +180,15 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.2 }}
             className="relative"
           >
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-ghana-green/20" />
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-npp-blue/20" />
             {demoContent.about.timeline.map((item) => (
               <motion.div key={`${item.year}-${item.event}`} variants={staggerItem} className="relative pl-20 pb-10 last:pb-0">
-                <div className="absolute left-5 w-7 h-7 bg-ghana-green rounded-full flex items-center justify-center shadow-lg">
-                  <div className="w-2.5 h-2.5 bg-ghana-gold rounded-full" />
+                <div className="absolute left-5 w-7 h-7 bg-npp-blue rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-2.5 h-2.5 bg-npp-red rounded-full" />
                 </div>
                 <div className="bg-gray-50 rounded-xl p-5 hover:shadow-md transition-shadow">
-                  <span className="text-ghana-green font-bold text-sm">{item.year}</span>
-                  <h3 className="font-semibold text-lg text-ghana-black mt-1">{item.event}</h3>
+                  <span className="text-npp-blue font-bold text-sm">{item.year}</span>
+                  <h3 className="font-semibold text-lg text-gray-900 mt-1">{item.event}</h3>
                   <p className="text-gray-600 text-sm mt-1">{item.details}</p>
                 </div>
               </motion.div>

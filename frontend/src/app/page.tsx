@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -26,9 +27,10 @@ import {
   User,
 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { mediaUrl } from '@/lib/mediaUrl';
 import { demoContent } from '@/lib/demoContent';
+import { seedAnnouncements, seedProjects, seedSuccessStories } from '@/lib/seedContent';
 import MpDemoProfileFigure from '@/components/MpDemoProfileFigure';
+import SafeImage from '@/components/SafeImage';
 
 interface Announcement {
   id: string;
@@ -71,17 +73,17 @@ interface Service {
 }
 
 const stats = [
-  { label: 'Constituents Served', value: '25,000+', icon: Users, color: 'bg-ghana-green' },
-  { label: 'Projects Delivered', value: '45+', icon: FolderKanban, color: 'bg-ghana-gold' },
-  { label: 'Communities Reached', value: '32', icon: TrendingUp, color: 'bg-ghana-red' },
-  { label: 'Concerns Resolved', value: '1,200+', icon: CheckCircle, color: 'bg-ghana-green' },
+  { label: 'Party Members', value: '25,000+', icon: Users, color: 'bg-npp-blue' },
+  { label: 'Projects Delivered', value: '45+', icon: FolderKanban, color: 'bg-npp-red' },
+  { label: 'Communities Reached', value: '32', icon: TrendingUp, color: 'bg-npp-blue-light' },
+  { label: 'Concerns Resolved', value: '1,200+', icon: CheckCircle, color: 'bg-npp-red-dark' },
 ];
 
 const quickLinks = [
-  { title: 'Join the constituency updates', description: 'Get alerts on programmes, events, and opportunities in your area.', icon: UserPlus, href: '/register', color: 'text-ghana-green', bg: 'bg-ghana-green/10' },
-  { title: 'Share Concern', description: 'Report issues or raise community matters directly.', icon: MessageSquareWarning, href: '/concerns', color: 'text-ghana-red', bg: 'bg-ghana-red/10' },
-  { title: 'Volunteer', description: 'Make a difference in communities across the constituency.', icon: HandHeart, href: '/volunteer', color: 'text-ghana-gold-dark', bg: 'bg-ghana-gold/10' },
-  { title: 'Opportunities', description: 'Explore training, grants, and empowerment programs.', icon: Briefcase, href: '/opportunities', color: 'text-blue-600', bg: 'bg-blue-50' },
+  { title: 'Join the Party', description: 'Register as an NPP member and stay informed about party activities.', icon: UserPlus, href: '/register', color: 'text-npp-blue', bg: 'bg-npp-blue/10' },
+  { title: 'Share Concern', description: 'Report issues or raise community matters directly to the party.', icon: MessageSquareWarning, href: '/concerns', color: 'text-npp-red', bg: 'bg-npp-red/10' },
+  { title: 'Volunteer', description: 'Make a difference in communities across the constituency.', icon: HandHeart, href: '/volunteer', color: 'text-npp-blue-dark', bg: 'bg-npp-blue/10' },
+  { title: 'Opportunities', description: 'Explore training, grants, and empowerment programs.', icon: Briefcase, href: '/opportunities', color: 'text-npp-red-dark', bg: 'bg-npp-red/10' },
 ];
 
 const SECTION_LABELS = ['Home', 'Services', 'News', 'Projects', 'Connect'];
@@ -130,14 +132,36 @@ export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [stories, setStories] = useState<SuccessStory[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [contentReady, setContentReady] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    api.announcements.getAll().then((d) => setAnnouncements((d as Announcement[]).slice(0, 12))).catch(() => {});
-    api.projects.getAll().then((d) => setProjects((d as Project[]).slice(0, 12))).catch(() => {});
-    api.gallery.getStories().then((d) => setStories(d as SuccessStory[])).catch(() => {});
-    api.services.getAll().then((d) => setServices(d as Service[])).catch(() => {});
+    Promise.allSettled([
+      api.announcements.getAll(),
+      api.projects.getAll(),
+      api.gallery.getStories(),
+      api.services.getAll(),
+    ]).then(([annRes, projRes, storyRes, svcRes]) => {
+      const ann = annRes.status === 'fulfilled' && Array.isArray(annRes.value) && annRes.value.length > 0
+        ? (annRes.value as Announcement[]).slice(0, 12)
+        : [...seedAnnouncements];
+      const proj = projRes.status === 'fulfilled' && Array.isArray(projRes.value) && projRes.value.length > 0
+        ? (projRes.value as Project[]).slice(0, 12)
+        : [...seedProjects];
+      const story = storyRes.status === 'fulfilled' && Array.isArray(storyRes.value) && storyRes.value.length > 0
+        ? (storyRes.value as SuccessStory[])
+        : [...seedSuccessStories];
+      const svc = svcRes.status === 'fulfilled' && Array.isArray(svcRes.value)
+        ? (svcRes.value as Service[])
+        : [];
+
+      setAnnouncements(ann);
+      setProjects(proj);
+      setStories(story);
+      setServices(svc);
+      setContentReady(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -193,14 +217,14 @@ export default function HomePage() {
   const pages = [
     <HeroSection key="hero" onNext={() => go(1)} />,
     <ServicesSection key="services" services={services} />,
-    <NewsSection key="news" data={announcements} />,
-    <ProjectsSection key="projects" data={projects} />,
+    <NewsSection key="news" data={announcements} ready={contentReady} />,
+    <ProjectsSection key="projects" data={projects} ready={contentReady} />,
     <ConnectSection key="connect" stories={stories} />,
   ];
 
   if (!mounted) {
     return (
-      <div className="h-[calc(100dvh-65px)] w-full overflow-hidden relative bg-ghana-green" />
+      <div className="h-[calc(100dvh-65px)] w-full overflow-hidden relative bg-npp-blue" />
     );
   }
 
@@ -210,8 +234,7 @@ export default function HomePage() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* ── Dot Nav ── */}
-      <nav className="fixed right-3 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-2.5">
+      <nav className="fixed right-3 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-2.5">
         {SECTION_LABELS.map((label, i) => (
           <button
             key={label}
@@ -219,34 +242,41 @@ export default function HomePage() {
             className="group flex items-center justify-end gap-2"
             aria-label={`Go to ${label}`}
           >
-            <span className={`text-[10px] font-semibold uppercase tracking-wider transition-all duration-300 ${section === i ? 'opacity-100 text-ghana-green' : 'opacity-0 group-hover:opacity-100 text-gray-400'}`}>
+            <span className={`text-[10px] font-semibold uppercase tracking-wider transition-all duration-300 ${section === i ? 'opacity-100 text-npp-blue' : 'opacity-0 group-hover:opacity-100 text-gray-400'}`}>
               {label}
             </span>
-            <span className={`block rounded-full transition-all duration-300 ${section === i ? 'w-3 h-3 bg-ghana-gold shadow-md shadow-ghana-gold/40' : 'w-2 h-2 bg-gray-300 group-hover:bg-ghana-green group-hover:scale-125'}`} />
+            <span className={`block rounded-full transition-all duration-300 ${section === i ? 'w-3 h-3 bg-npp-red shadow-md shadow-npp-red/40' : 'w-2 h-2 bg-gray-300 group-hover:bg-npp-blue group-hover:scale-125'}`} />
           </button>
         ))}
       </nav>
 
-      {/* ── Section counter (mobile) ── */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 flex gap-1.5 md:hidden">
-        {SECTION_LABELS.map((_, i) => (
-          <button key={i} onClick={() => jumpTo(i)} className={`rounded-full transition-all duration-300 ${section === i ? 'w-6 h-1.5 bg-ghana-gold' : 'w-1.5 h-1.5 bg-white/40'}`} />
-        ))}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 md:hidden">
+        <p className="text-[10px] font-medium uppercase tracking-widest text-white/50">
+          {section === 0 ? 'Swipe up to explore' : SECTION_LABELS[section]}
+        </p>
+        <div className="flex gap-1.5">
+          {SECTION_LABELS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => jumpTo(i)}
+              aria-label={`Go to ${SECTION_LABELS[i]}`}
+              className={`rounded-full transition-all duration-300 ${section === i ? 'w-6 h-1.5 bg-npp-red' : 'w-1.5 h-1.5 bg-white/40'}`}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* ── Up / Down arrows ── */}
       {section > 0 && (
-        <button onClick={() => go(-1)} className="absolute top-3 left-1/2 -translate-x-1/2 z-50 text-gray-400 hover:text-ghana-green transition-colors">
+        <button onClick={() => go(-1)} className="absolute top-3 left-1/2 -translate-x-1/2 z-50 text-gray-400 hover:text-npp-blue transition-colors">
           <ChevronUp size={22} />
         </button>
       )}
       {section < TOTAL - 1 && (
-        <button onClick={() => go(1)} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 text-gray-400 hover:text-ghana-green transition-colors hidden md:block">
+        <button onClick={() => go(1)} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 text-gray-400 hover:text-npp-blue transition-colors hidden md:block">
           <ChevronDown size={22} />
         </button>
       )}
 
-      {/* ── Page flip ── */}
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={section}
@@ -271,38 +301,39 @@ export default function HomePage() {
 
 function HeroSection({ onNext }: { onNext: () => void }) {
   return (
-    <section className="h-full w-full bg-ghana-green flex items-center overflow-y-auto lg:overflow-hidden relative [scrollbar-width:thin]">
+    <section className="h-full w-full bg-npp-blue flex items-center overflow-y-auto lg:overflow-hidden relative [scrollbar-width:thin]">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-ghana-green-dark via-ghana-green to-ghana-green-light opacity-90" />
-        <div className="absolute top-10 right-10 lg:top-20 lg:right-20 w-72 lg:w-[500px] h-72 lg:h-[500px] bg-ghana-gold/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 lg:bottom-20 lg:left-20 w-56 lg:w-[400px] h-56 lg:h-[400px] bg-ghana-gold/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-npp-blue-dark via-npp-blue to-npp-blue-light opacity-90" />
+        <div className="absolute top-10 right-10 lg:top-20 lg:right-20 w-72 lg:w-[500px] h-72 lg:h-[500px] bg-npp-red/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 lg:bottom-20 lg:left-20 w-56 lg:w-[400px] h-56 lg:h-[400px] bg-white/5 rounded-full blur-3xl" />
+        {/* NPP flag wave decoration */}
+        <div className="absolute -right-20 top-0 bottom-0 w-[600px] opacity-[0.08] pointer-events-none hidden lg:block">
+          <Image src="/images/npp-flag.png" alt="" fill className="object-cover" />
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-6 lg:py-0">
         <div className="grid lg:grid-cols-2 gap-5 lg:gap-12 items-center">
-          {/* Mobile MP photo — large portrait card (not a small circle) */}
           <motion.div {...childFade(0)} className="lg:hidden flex justify-center order-first">
-            <div className="relative w-[min(92vw,340px)] aspect-[3/4] max-h-[min(52dvh,420px)] rounded-2xl overflow-hidden border-4 border-ghana-gold/35 shadow-2xl ring-2 ring-white/10">
+            <div className="relative w-[min(92vw,340px)] aspect-[3/4] max-h-[min(52dvh,420px)] rounded-2xl overflow-hidden border-4 border-npp-red/35 shadow-2xl ring-2 ring-white/10">
               <MpDemoProfileFigure variant="heroMobile" className="absolute inset-0 w-full h-full" />
             </div>
           </motion.div>
 
-          {/* Text */}
           <motion.div {...childFade(0.15)} className="order-2 lg:order-none">
             <div className="hidden lg:inline-flex items-center bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full mb-3 lg:mb-6">
-              <Shield size={14} className="text-ghana-gold mr-1.5" />
-              <span className="text-white/90 text-xs font-medium">Official Constituency Platform</span>
+              <Shield size={14} className="text-npp-red-light mr-1.5" />
+              <span className="text-white/90 text-xs font-medium">New Patriotic Party — Official Platform</span>
             </div>
 
-            <p className="text-ghana-gold/95 text-[11px] sm:text-xs font-semibold tracking-wide uppercase text-center lg:text-left mb-1 lg:hidden">
+            <p className="text-npp-red-light text-[11px] sm:text-xs font-semibold tracking-wide uppercase text-center lg:text-left mb-1 lg:hidden">
               {demoContent.mp.heroEyebrowMobile}
             </p>
 
             <h1 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-3 lg:mb-6 text-center lg:text-left">
-              Building a <span className="text-ghana-gold">Stronger</span>{' '}
+              Development in <span className="text-npp-red-light">Freedom</span>{' '}
               <br className="hidden lg:block" aria-hidden="true" />
-              Community{' '}
-              <span className="text-ghana-gold">Together</span>
+              Building a <span className="text-npp-red-light">Better</span> Ghana
             </h1>
 
             <p className="text-white/85 text-xs leading-relaxed text-center lg:text-left mx-auto lg:mx-0 mb-4 block sm:hidden max-w-xl">
@@ -313,8 +344,8 @@ function HeroSection({ onNext }: { onNext: () => void }) {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Link href="/register" className="bg-ghana-gold text-ghana-black px-5 sm:px-6 py-3 rounded-xl font-semibold hover:bg-ghana-gold-dark transition-all shadow-xl flex items-center justify-center gap-2 text-center text-sm sm:text-base leading-snug">
-                <UserPlus size={18} className="shrink-0" /><span>Join the constituency updates</span>
+              <Link href="/register" className="bg-npp-red text-white px-5 sm:px-6 py-3 rounded-xl font-semibold hover:bg-npp-red-dark transition-all shadow-xl flex items-center justify-center gap-2 text-center text-sm sm:text-base leading-snug">
+                <UserPlus size={18} className="shrink-0" /><span>Join the Party</span>
               </Link>
               <Link href="/concerns" className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20 flex items-center justify-center space-x-2">
                 <MessageSquareWarning size={18} /><span>Share Concern</span>
@@ -322,41 +353,40 @@ function HeroSection({ onNext }: { onNext: () => void }) {
             </div>
           </motion.div>
 
-          {/* Desktop MP photo */}
           <motion.div {...childFade(0.3)} className="hidden lg:block">
             <div className="relative">
               <div className="w-[400px] h-[480px] mx-auto relative rounded-3xl overflow-hidden shadow-2xl">
                 <MpDemoProfileFigure variant="heroDesktop" className="w-full h-full" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 pointer-events-none">
                   <p className="text-white font-bold text-xl">{demoContent.mp.displayName}</p>
-                  <p className="text-ghana-gold text-sm">{demoContent.mp.profileSubtitle}</p>
+                  <p className="text-npp-red-light text-sm">{demoContent.mp.profileSubtitle}</p>
                 </div>
               </div>
               <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-4 top-16 bg-white rounded-xl shadow-xl p-3">
-                <p className="text-ghana-green font-bold text-xs">Active Projects</p>
-                <p className="text-2xl font-bold text-ghana-black">12</p>
+                <p className="text-npp-blue font-bold text-xs">Active Projects</p>
+                <p className="text-2xl font-bold text-gray-900">12</p>
               </motion.div>
               <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 1 }} className="absolute -left-4 bottom-28 bg-white rounded-xl shadow-xl p-3">
-                <p className="text-ghana-green font-bold text-xs">Registered</p>
-                <p className="text-2xl font-bold text-ghana-black">25K+</p>
+                <p className="text-npp-blue font-bold text-xs">Registered</p>
+                <p className="text-2xl font-bold text-gray-900">25K+</p>
               </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Scroll hint */}
       <motion.button
         onClick={onNext}
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 flex flex-col items-center cursor-pointer hover:text-white/70 transition-colors"
       >
-        <span className="text-[10px] uppercase tracking-widest mb-1">Scroll</span>
+        <span className="text-[10px] uppercase tracking-widest mb-1 md:hidden">Explore</span>
+        <span className="text-[10px] uppercase tracking-widest mb-1 hidden md:inline">Scroll</span>
         <ChevronDown size={18} />
       </motion.button>
 
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-ghana-red via-ghana-gold to-ghana-green" />
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-npp-red via-white to-npp-blue" />
     </section>
   );
 }
@@ -367,11 +397,11 @@ function ServicesSection({ services: apiServices }: { services: Service[] }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-6">
         <motion.div {...childFade(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-5 mb-8 lg:mb-14">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center p-3 lg:p-5 rounded-2xl bg-gray-50 hover:shadow-lg transition-all group">
+            <div key={stat.label} className="text-center p-3 lg:p-5 rounded-2xl npp-card hover:-translate-y-0.5 transition-all group">
               <div className={`w-11 h-11 lg:w-14 lg:h-14 ${stat.color} rounded-xl flex items-center justify-center mx-auto mb-2 lg:mb-3 group-hover:scale-110 transition-transform`}>
                 <stat.icon size={22} className="text-white" />
               </div>
-              <p className="text-xl lg:text-3xl font-bold text-ghana-black">{stat.value}</p>
+              <p className="text-xl lg:text-3xl font-bold text-gray-900">{stat.value}</p>
               <p className="text-gray-500 text-[10px] lg:text-xs">{stat.label}</p>
             </div>
           ))}
@@ -379,19 +409,19 @@ function ServicesSection({ services: apiServices }: { services: Service[] }) {
 
         <motion.div {...childFade(0.2)}>
           <div className="text-center mb-5 lg:mb-8">
-            <span className="text-ghana-green font-semibold text-xs uppercase tracking-wider">What We Offer</span>
-            <h2 className="text-xl lg:text-3xl font-bold text-ghana-black mt-1">Quick Actions & Services</h2>
-            <div className="w-12 h-0.5 bg-ghana-gold mx-auto mt-3 rounded-full" />
+            <span className="npp-eyebrow">What We Offer</span>
+            <h2 className="text-xl lg:text-3xl font-bold text-gray-900 mt-1">Quick Actions & Services</h2>
+            <div className="npp-accent-bar" />
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5 mb-6">
             {quickLinks.map((s) => (
               <Link key={s.title} href={s.href} className="block group">
-                <div className="bg-gray-50 rounded-xl p-4 lg:p-6 hover:shadow-xl transition-all border border-gray-100 hover:-translate-y-1 h-full">
+                <div className="bg-gray-50 rounded-xl p-4 lg:p-6 npp-card hover:-translate-y-1 transition-all h-full">
                   <div className={`w-10 h-10 lg:w-12 lg:h-12 ${s.bg} rounded-xl flex items-center justify-center mb-2 lg:mb-3 group-hover:scale-110 transition-transform`}>
                     <s.icon size={20} className={s.color} />
                   </div>
-                  <h3 className="text-sm lg:text-base font-semibold text-ghana-black mb-1">{s.title}</h3>
+                  <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-1">{s.title}</h3>
                   <p className="text-gray-500 text-[11px] lg:text-xs leading-relaxed">{s.description}</p>
                   <span className={`${s.color} text-[11px] font-medium flex items-center mt-2`}>
                     Get Started <ChevronRight size={12} className="ml-0.5 group-hover:translate-x-1 transition-transform" />
@@ -405,8 +435,8 @@ function ServicesSection({ services: apiServices }: { services: Service[] }) {
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-3">
               {apiServices.slice(0, 6).map((svc) => (
                 <div key={svc.id} className="flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
-                  <div className="w-8 h-8 rounded-lg bg-ghana-green/10 flex items-center justify-center flex-shrink-0">
-                    <Briefcase size={14} className="text-ghana-green" />
+                  <div className="w-8 h-8 rounded-lg bg-npp-blue/10 flex items-center justify-center flex-shrink-0">
+                    <Briefcase size={14} className="text-npp-blue" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-medium text-gray-900 truncate">{svc.title}</p>
@@ -422,7 +452,7 @@ function ServicesSection({ services: apiServices }: { services: Service[] }) {
   );
 }
 
-function NewsSection({ data }: { data: Announcement[] }) {
+function NewsSection({ data, ready }: { data: Announcement[]; ready: boolean }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [modal, setModal] = useState<Announcement | null>(null);
 
@@ -446,23 +476,29 @@ function NewsSection({ data }: { data: Announcement[] }) {
         <motion.div {...childFade(0)}>
           <div className="flex items-center justify-between mb-6 lg:mb-10">
             <div>
-              <span className="text-ghana-green font-semibold text-xs uppercase tracking-wider">Stay Informed</span>
-              <h2 className="text-xl lg:text-3xl font-bold text-ghana-black mt-1">Latest Announcements</h2>
+              <span className="text-npp-blue font-semibold text-xs uppercase tracking-wider">Stay Informed</span>
+              <h2 className="text-xl lg:text-3xl font-bold text-gray-900 mt-1">Latest Announcements</h2>
               <p className="text-gray-500 text-xs mt-1 hidden sm:block">Swipe or use arrows — tap a card to read the full notice.</p>
             </div>
-            <Link href="/announcements" className="hidden sm:flex items-center text-ghana-green font-medium text-sm hover:underline">
+            <Link href="/announcements" className="hidden sm:flex items-center text-npp-blue font-medium text-sm hover:underline">
               View All <ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
         </motion.div>
 
-        {data.length > 0 ? (
+        {!ready ? (
+          <div className="flex gap-4 overflow-hidden px-1">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="shrink-0 w-[min(88vw,300px)] h-64 rounded-2xl bg-gray-200/80 animate-pulse" />
+            ))}
+          </div>
+        ) : data.length > 0 ? (
           <motion.div {...childFade(0.15)} className="relative">
             <button
               type="button"
               aria-label="Previous announcements"
               onClick={() => scrollCarousel(-1)}
-              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md text-ghana-green hover:bg-ghana-green hover:text-white hover:border-ghana-green transition-colors -ml-2 lg:-ml-4"
+              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md text-npp-blue hover:bg-npp-blue hover:text-white hover:border-npp-blue transition-colors -ml-2 lg:-ml-4"
             >
               <ChevronLeft size={22} />
             </button>
@@ -470,7 +506,7 @@ function NewsSection({ data }: { data: Announcement[] }) {
               type="button"
               aria-label="Next announcements"
               onClick={() => scrollCarousel(1)}
-              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md text-ghana-green hover:bg-ghana-green hover:text-white hover:border-ghana-green transition-colors -mr-2 lg:-mr-4"
+              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md text-npp-blue hover:bg-npp-blue hover:text-white hover:border-npp-blue transition-colors -mr-2 lg:-mr-4"
             >
               <ChevronRight size={22} />
             </button>
@@ -484,39 +520,44 @@ function NewsSection({ data }: { data: Announcement[] }) {
                   key={item.id}
                   type="button"
                   onClick={() => setModal(item)}
-                  className="snap-start shrink-0 w-[min(88vw,300px)] sm:w-72 text-left bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group border border-gray-100 hover:-translate-y-1 hover:border-ghana-green/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-ghana-green focus-visible:ring-offset-2"
+                  className="snap-start shrink-0 w-[min(88vw,300px)] sm:w-72 text-left bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group border border-gray-100 hover:-translate-y-1 hover:border-npp-blue/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-npp-blue focus-visible:ring-offset-2"
                 >
                   <div className="h-36 lg:h-40 overflow-hidden relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={mediaUrl(item.image)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    {item.urgent && <div className="absolute top-2 left-2 bg-ghana-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full">URGENT</div>}
-                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-ghana-green text-[10px] font-semibold px-2 py-0.5 rounded-full">{item.category}</div>
+                    <SafeImage
+                      src={item.image}
+                      alt={item.title}
+                      category={item.category}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      placeholderClassName="w-full h-full"
+                    />
+                    {item.urgent && <div className="absolute top-2 left-2 bg-npp-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full">URGENT</div>}
+                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-npp-blue text-[10px] font-semibold px-2 py-0.5 rounded-full">{item.category}</div>
                   </div>
                   <div className="p-4">
                     <p className="text-gray-400 text-[10px] mb-1">{new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    <h3 className="font-semibold text-ghana-black text-sm lg:text-base mb-1 group-hover:text-ghana-green transition-colors line-clamp-2">{item.title}</h3>
+                    <h3 className="font-semibold text-gray-900 text-sm lg:text-base mb-1 group-hover:text-npp-blue transition-colors line-clamp-2">{item.title}</h3>
                     <p className="text-gray-600 text-xs line-clamp-2">{item.content}</p>
-                    <span className="inline-flex items-center text-ghana-green text-[11px] font-medium mt-2">Read more</span>
+                    <span className="inline-flex items-center text-npp-blue text-[11px] font-medium mt-2">Read more</span>
                   </div>
                 </button>
               ))}
             </div>
 
             <div className="flex sm:hidden justify-center gap-3 mt-2">
-              <button type="button" aria-label="Previous" onClick={() => scrollCarousel(-1)} className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-ghana-green shadow-sm">
+              <button type="button" aria-label="Previous" onClick={() => scrollCarousel(-1)} className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-npp-blue shadow-sm">
                 <ChevronLeft size={20} />
               </button>
-              <button type="button" aria-label="Next" onClick={() => scrollCarousel(1)} className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-ghana-green shadow-sm">
+              <button type="button" aria-label="Next" onClick={() => scrollCarousel(1)} className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-npp-blue shadow-sm">
                 <ChevronRight size={20} />
               </button>
             </div>
           </motion.div>
         ) : (
-          <div className="text-center py-16 text-gray-400"><p className="text-sm">Loading announcements...</p></div>
+          <div className="text-center py-16 text-gray-400"><p className="text-sm">Announcements will appear here soon.</p></div>
         )}
 
         <div className="text-center mt-5 sm:hidden">
-          <Link href="/announcements" className="text-ghana-green font-medium inline-flex items-center text-sm">
+          <Link href="/announcements" className="text-npp-blue font-medium inline-flex items-center text-sm">
             View All <ArrowRight size={16} className="ml-1" />
           </Link>
         </div>
@@ -548,15 +589,20 @@ function NewsSection({ data }: { data: Announcement[] }) {
                 <X size={18} />
               </button>
               <div className="h-48 sm:h-56 relative shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={mediaUrl(modal.image)} alt="" className="w-full h-full object-cover" />
+                <SafeImage
+                  src={modal.image}
+                  alt={modal.title}
+                  category={modal.category}
+                  className="w-full h-full object-cover"
+                  placeholderClassName="w-full h-full"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-                {modal.urgent && <span className="absolute top-3 left-3 bg-ghana-red text-white text-[10px] font-bold px-2 py-1 rounded-full">URGENT</span>}
+                {modal.urgent && <span className="absolute top-3 left-3 bg-npp-red text-white text-[10px] font-bold px-2 py-1 rounded-full">URGENT</span>}
                 <span className="absolute bottom-3 left-3 text-white text-[11px] font-semibold bg-white/20 backdrop-blur-sm px-2 py-1 rounded-md">{modal.category}</span>
               </div>
               <div className="p-5 sm:p-6 overflow-y-auto max-h-[calc(min(90vh,640px)-12rem)]">
                 <p className="text-gray-400 text-xs mb-2">{new Date(modal.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                <h3 className="text-xl font-bold text-ghana-black leading-snug mb-4">{modal.title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 leading-snug mb-4">{modal.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{modal.content}</p>
               </div>
             </motion.div>
@@ -567,7 +613,7 @@ function NewsSection({ data }: { data: Announcement[] }) {
   );
 }
 
-function ProjectsSection({ data }: { data: Project[] }) {
+function ProjectsSection({ data, ready }: { data: Project[]; ready: boolean }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [modal, setModal] = useState<Project | null>(null);
 
@@ -586,23 +632,29 @@ function ProjectsSection({ data }: { data: Project[] }) {
   };
 
   return (
-    <section className="h-full w-full bg-ghana-green text-white flex flex-col justify-center">
+    <section className="h-full w-full bg-npp-blue text-white flex flex-col justify-center">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-6">
         <motion.div {...childFade(0)}>
           <div className="text-center mb-6 lg:mb-10">
-            <span className="text-ghana-gold font-semibold text-xs uppercase tracking-wider">Development Tracker</span>
+            <span className="text-npp-red-light font-semibold text-xs uppercase tracking-wider">Development Tracker</span>
             <h2 className="text-xl lg:text-3xl font-bold mt-1">Constituency Projects</h2>
             <p className="text-white/60 text-xs lg:text-sm mt-2 max-w-md mx-auto">Swipe or use arrows — tap a project for full details.</p>
           </div>
         </motion.div>
 
-        {data.length > 0 ? (
+        {!ready ? (
+          <div className="flex gap-4 overflow-hidden px-1 mb-6">
+            {[0, 1].map((i) => (
+              <div key={i} className="shrink-0 w-[min(88vw,300px)] h-72 rounded-2xl bg-white/10 animate-pulse" />
+            ))}
+          </div>
+        ) : data.length > 0 ? (
           <motion.div {...childFade(0.15)} className="relative mb-6 lg:mb-10">
             <button
               type="button"
               aria-label="Previous projects"
               onClick={() => scrollCarousel(-1)}
-              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white/95 border border-white text-ghana-green shadow-lg hover:bg-ghana-gold hover:text-ghana-black transition-colors -ml-2 lg:-ml-4"
+              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white/95 border border-white text-npp-blue shadow-lg hover:bg-npp-red hover:text-white transition-colors -ml-2 lg:-ml-4"
             >
               <ChevronLeft size={22} />
             </button>
@@ -610,7 +662,7 @@ function ProjectsSection({ data }: { data: Project[] }) {
               type="button"
               aria-label="Next projects"
               onClick={() => scrollCarousel(1)}
-              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white/95 border border-white text-ghana-green shadow-lg hover:bg-ghana-gold hover:text-ghana-black transition-colors -mr-2 lg:-mr-4"
+              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 items-center justify-center rounded-full bg-white/95 border border-white text-npp-blue shadow-lg hover:bg-npp-red hover:text-white transition-colors -mr-2 lg:-mr-4"
             >
               <ChevronRight size={22} />
             </button>
@@ -624,17 +676,18 @@ function ProjectsSection({ data }: { data: Project[] }) {
                   key={p.id}
                   type="button"
                   onClick={() => setModal(p)}
-                  className="snap-start shrink-0 w-[min(88vw,300px)] sm:w-72 text-left rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-lg shadow-black/10 hover:bg-white/[0.12] hover:border-white/30 hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-ghana-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ghana-green"
+                  className="snap-start shrink-0 w-[min(88vw,300px)] sm:w-72 text-left rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-lg shadow-black/10 hover:bg-white/[0.12] hover:border-white/30 hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-npp-red focus-visible:ring-offset-2 focus-visible:ring-offset-npp-blue"
                 >
                   <div className="p-3 pb-0">
                     <div className="relative aspect-[4/3] rounded-xl overflow-hidden ring-1 ring-white/20 shadow-inner bg-black/20">
                       {p.image ? (
                         <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={mediaUrl(p.image)}
+                          <SafeImage
+                            src={p.image}
                             alt={p.title}
+                            category={p.category}
                             className="absolute inset-0 w-full h-full object-cover"
+                            placeholderClassName="absolute inset-0 w-full h-full"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none" />
                           <div className="absolute bottom-0 left-0 right-0 p-3 pt-8">
@@ -651,7 +704,7 @@ function ProjectsSection({ data }: { data: Project[] }) {
                   </div>
                   <div className="p-4 pt-3 flex-1 flex flex-col">
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-ghana-gold text-[10px] font-semibold bg-black/20 px-2 py-0.5 rounded-md border border-ghana-gold/20 truncate max-w-[55%]">
+                      <span className="text-npp-red-light text-[10px] font-semibold bg-black/20 px-2 py-0.5 rounded-md border border-npp-red/20 truncate max-w-[55%]">
                         {p.category}
                       </span>
                       <span
@@ -670,17 +723,17 @@ function ProjectsSection({ data }: { data: Project[] }) {
                     <div className="mt-auto space-y-2">
                       <div className="flex justify-between text-[11px] text-white/55">
                         <span>Progress</span>
-                        <span className="font-bold text-ghana-gold tabular-nums">{p.progress}%</span>
+                        <span className="font-bold text-npp-red-light tabular-nums">{p.progress}%</span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-black/25 overflow-hidden ring-1 ring-white/10">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${p.progress}%` }}
                           transition={{ duration: 1.2, ease: 'easeOut', delay: 0.2 }}
-                          className={`h-full rounded-full ${p.progress === 100 ? 'bg-emerald-400' : 'bg-ghana-gold'}`}
+                          className={`h-full rounded-full ${p.progress === 100 ? 'bg-emerald-400' : 'bg-npp-red'}`}
                         />
                       </div>
-                      <span className="inline-flex text-ghana-gold text-[11px] font-medium">View details</span>
+                      <span className="inline-flex text-npp-red-light text-[11px] font-medium">View details</span>
                     </div>
                   </div>
                 </button>
@@ -697,11 +750,11 @@ function ProjectsSection({ data }: { data: Project[] }) {
             </div>
           </motion.div>
         ) : (
-          <div className="text-center py-16 text-white/40"><p className="text-sm">Loading projects...</p></div>
+          <div className="text-center py-16 text-white/40"><p className="text-sm">Projects will appear here soon.</p></div>
         )}
 
         <motion.div {...childFade(0.3)} className="text-center">
-          <Link href="/projects" className="inline-flex items-center bg-ghana-gold text-ghana-black px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-ghana-gold-dark transition-colors">
+          <Link href="/projects" className="inline-flex items-center bg-npp-red text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-npp-red-dark transition-colors">
             View All Projects <ArrowRight size={16} className="ml-2" />
           </Link>
         </motion.div>
@@ -721,7 +774,7 @@ function ProjectsSection({ data }: { data: Project[] }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 12 }}
               transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-              className="relative bg-white rounded-2xl max-w-lg w-full max-h-[min(90vh,680px)] overflow-hidden shadow-2xl border border-gray-100 text-ghana-black"
+              className="relative bg-white rounded-2xl max-w-lg w-full max-h-[min(90vh,680px)] overflow-hidden shadow-2xl border border-gray-100 text-gray-900"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -734,18 +787,23 @@ function ProjectsSection({ data }: { data: Project[] }) {
               </button>
               {modal.image ? (
                 <div className="h-48 sm:h-52 relative shrink-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={mediaUrl(modal.image)} alt={modal.title} className="w-full h-full object-cover" />
+                  <SafeImage
+                    src={modal.image}
+                    alt={modal.title}
+                    category={modal.category}
+                    className="w-full h-full object-cover"
+                    placeholderClassName="w-full h-full"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
                 </div>
               ) : (
-                <div className="h-32 bg-gradient-to-br from-ghana-green/15 to-ghana-gold/10 flex items-center justify-center">
-                  <FolderKanban size={40} className="text-ghana-green/40" />
+                <div className="h-32 bg-gradient-to-br from-npp-blue/15 to-npp-red/10 flex items-center justify-center">
+                  <FolderKanban size={40} className="text-npp-blue/40" />
                 </div>
               )}
               <div className="p-5 sm:p-6 overflow-y-auto max-h-[calc(min(90vh,680px)-11rem)]">
                 <div className="flex flex-wrap gap-2 mb-3">
-                  <span className="text-[10px] font-semibold px-2 py-1 rounded-md bg-ghana-green/10 text-ghana-green border border-ghana-green/15">{modal.category}</span>
+                  <span className="text-[10px] font-semibold px-2 py-1 rounded-md bg-npp-blue/10 text-npp-blue border border-npp-blue/15">{modal.category}</span>
                   <span className="text-[10px] font-semibold px-2 py-1 rounded-md bg-gray-100 text-gray-700 border border-gray-200">{modal.status}</span>
                 </div>
                 <h3 className="text-xl font-bold leading-snug mb-3">{modal.title}</h3>
@@ -755,35 +813,35 @@ function ProjectsSection({ data }: { data: Project[] }) {
                 <div className="mb-4">
                   <div className="flex justify-between text-xs text-gray-500 mb-1">
                     <span>Progress</span>
-                    <span className="font-semibold text-ghana-green">{modal.progress}%</span>
+                    <span className="font-semibold text-npp-blue">{modal.progress}%</span>
                   </div>
                   <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full bg-ghana-green transition-all" style={{ width: `${modal.progress}%` }} />
+                    <div className="h-full rounded-full bg-npp-blue transition-all" style={{ width: `${modal.progress}%` }} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-xs border-t border-gray-100 pt-4">
                   {modal.budget ? (
                     <div>
                       <p className="text-gray-400 uppercase tracking-wide text-[10px]">Budget</p>
-                      <p className="font-semibold text-ghana-black">{modal.budget}</p>
+                      <p className="font-semibold text-gray-900">{modal.budget}</p>
                     </div>
                   ) : null}
                   {modal.contractor ? (
                     <div className="col-span-2">
                       <p className="text-gray-400 uppercase tracking-wide text-[10px]">Contractor</p>
-                      <p className="font-semibold text-ghana-black">{modal.contractor}</p>
+                      <p className="font-semibold text-gray-900">{modal.contractor}</p>
                     </div>
                   ) : null}
                   {modal.startDate ? (
                     <div>
                       <p className="text-gray-400 uppercase tracking-wide text-[10px]">Start</p>
-                      <p className="font-semibold text-ghana-black">{new Date(modal.startDate).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      <p className="font-semibold text-gray-900">{new Date(modal.startDate).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                     </div>
                   ) : null}
                   {modal.endDate ? (
                     <div>
                       <p className="text-gray-400 uppercase tracking-wide text-[10px]">End</p>
-                      <p className="font-semibold text-ghana-black">{new Date(modal.endDate).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      <p className="font-semibold text-gray-900">{new Date(modal.endDate).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                     </div>
                   ) : null}
                 </div>
@@ -799,29 +857,28 @@ function ProjectsSection({ data }: { data: Project[] }) {
 function ConnectSection({ stories }: { stories: SuccessStory[] }) {
   return (
     <section className="h-full w-full flex flex-col">
-      {/* Stories */}
       <div className="flex-1 bg-gray-50 flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-6">
           <motion.div {...childFade(0)}>
             <div className="text-center mb-5 lg:mb-8">
-              <span className="text-ghana-green font-semibold text-xs uppercase tracking-wider">Impact Stories</span>
-              <h2 className="text-xl lg:text-3xl font-bold text-ghana-black mt-1">Success Stories</h2>
-              <div className="w-12 h-0.5 bg-ghana-gold mx-auto mt-3 rounded-full" />
+              <span className="npp-eyebrow text-npp-red-light">Impact Stories</span>
+              <h2 className="text-xl lg:text-3xl font-bold text-gray-900 mt-1">Success Stories</h2>
+              <div className="npp-accent-bar" />
             </div>
           </motion.div>
 
           {stories.length > 0 && (
             <motion.div {...childFade(0.15)} className="grid md:grid-cols-3 gap-4 lg:gap-6">
               {stories.map((story) => (
-                <div key={story.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1 flex flex-col">
-                  <Quote size={24} className="text-ghana-gold/30 mb-2" />
+                <div key={story.id} className="npp-card p-5 hover:-translate-y-1 transition-all flex flex-col">
+                  <Quote size={24} className="text-npp-red/30 mb-2" />
                   <p className="text-gray-600 text-xs leading-relaxed flex-1 italic">&ldquo;{story.story}&rdquo;</p>
                   <div className="flex items-center space-x-3 mt-4 pt-3 border-t border-gray-100">
-                    <div className="w-9 h-9 rounded-full bg-ghana-green/12 flex items-center justify-center shrink-0" aria-hidden>
-                      <User size={18} className="text-ghana-green" />
+                    <div className="w-9 h-9 rounded-full bg-npp-blue/12 flex items-center justify-center shrink-0" aria-hidden>
+                      <User size={18} className="text-npp-blue" />
                     </div>
                     <div>
-                      <p className="font-semibold text-ghana-black text-sm">{story.name}</p>
+                      <p className="font-semibold text-gray-900 text-sm">{story.name}</p>
                       <p className="text-gray-400 text-[10px]">Beneficiary, {story.year}</p>
                     </div>
                   </div>
@@ -832,17 +889,16 @@ function ConnectSection({ stories }: { stories: SuccessStory[] }) {
         </div>
       </div>
 
-      {/* CTA + Mini Footer */}
-      <div className="bg-gradient-to-r from-ghana-green-dark to-ghana-green text-white relative">
+      <div className="bg-gradient-to-r from-npp-blue-dark to-npp-blue text-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
           <motion.div {...childFade(0.1)} className="grid lg:grid-cols-2 gap-6 items-center">
             <div>
               <h2 className="text-xl lg:text-2xl font-bold mb-2">Be Part of the Change</h2>
-              <p className="text-white/70 text-sm max-w-md">Join the constituency updates to hear about opportunities, events, and how we&apos;re building together.</p>
+              <p className="text-white/70 text-sm max-w-md">Join the New Patriotic Party to be part of Ghana&apos;s development in freedom. Together, we build a stronger nation.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 lg:justify-end">
-              <Link href="/register" className="bg-ghana-gold text-ghana-black px-5 py-3 rounded-xl font-semibold hover:bg-ghana-gold-dark transition-all text-center text-xs sm:text-sm leading-snug">
-                Join the constituency updates
+              <Link href="/register" className="bg-npp-red text-white px-5 py-3 rounded-xl font-semibold hover:bg-npp-red-dark transition-all text-center text-xs sm:text-sm leading-snug">
+                Join the Party
               </Link>
               <Link href="/volunteer" className="bg-white/10 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20 text-center text-sm">
                 Become a Volunteer
@@ -854,9 +910,8 @@ function ConnectSection({ stories }: { stories: SuccessStory[] }) {
             <span className="flex items-center gap-1"><MapPin size={12} /> {demoContent.constituency.mapLine}</span>
             <span className="flex items-center gap-1"><Phone size={12} /> {demoContent.contact.phoneDisplay}</span>
             <span className="flex items-center gap-1"><Mail size={12} /> {demoContent.contact.emailDisplay}</span>
-            <span className="ml-auto flex items-center gap-2" suppressHydrationWarning>
-              <span className="text-white/40 border border-white/20 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">{demoContent.badges.system}</span>
-              <span>&copy; {new Date().getFullYear()} {demoContent.copyright.line}</span>
+            <span className="ml-auto text-white/40 text-[11px]" suppressHydrationWarning>
+              &copy; {new Date().getFullYear()} {demoContent.copyright.line}
             </span>
           </div>
         </div>

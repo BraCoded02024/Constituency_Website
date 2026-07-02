@@ -133,9 +133,28 @@ async function initializeDatabase() {
       image TEXT,
       year TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS delegates (
+      id TEXT PRIMARY KEY,
+      full_name TEXT NOT NULL,
+      address TEXT,
+      gender TEXT,
+      ghana_card TEXT,
+      voters_id TEXT,
+      polling_station_name TEXT,
+      polling_station_code TEXT,
+      phone TEXT,
+      email TEXT,
+      community TEXT,
+      status TEXT DEFAULT 'Active',
+      registered_at TEXT NOT NULL
+    );
   `);
 
   await pool.query('ALTER TABLE projects ADD COLUMN IF NOT EXISTS image TEXT');
+  await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS voters_id TEXT');
+  await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_name TEXT');
+  await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_code TEXT');
 
   await seedIfEmpty();
   console.log('Database initialized successfully');

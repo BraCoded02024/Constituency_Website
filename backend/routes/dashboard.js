@@ -50,6 +50,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
 
   res.json({
     totalConstituents: await count('constituents'),
+    totalDelegates: await count('delegates'),
     totalConcerns: await count('concerns'),
     pendingConcerns: await count('concerns', "status = 'Pending'"),
     inProgressConcerns: await count('concerns', "status = 'In Progress'"),

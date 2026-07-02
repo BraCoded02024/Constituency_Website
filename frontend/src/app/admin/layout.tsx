@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   LayoutDashboard, Megaphone, FolderKanban, Calendar,
-  AlertTriangle, Users, UserPlus, Image, Star,
-  Briefcase, Settings, LogOut, Menu, X, ChevronLeft, Wrench,
+  AlertTriangle, Users, UserPlus, Image as ImageIcon, Star,
+  Briefcase, Settings, LogOut, Menu, X, ChevronLeft, Wrench, UserCheck,
 } from 'lucide-react';
 
 const navItems = [
@@ -17,10 +18,11 @@ const navItems = [
   { href: '/admin/events', label: 'Events', icon: Calendar },
   { href: '/admin/opportunities', label: 'Opportunities', icon: Briefcase },
   { href: '/admin/services', label: 'Services', icon: Wrench },
-  { href: '/admin/gallery', label: 'Gallery', icon: Image },
+  { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon },
   { href: '/admin/stories', label: 'Success Stories', icon: Star },
   { href: '/admin/constituents', label: 'Constituents', icon: Users },
   { href: '/admin/volunteers', label: 'Volunteers', icon: UserPlus },
+  { href: '/admin/delegates', label: 'Delegates', icon: UserCheck },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -74,10 +76,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-ghana-green flex items-center justify-center">
-              <LayoutDashboard size={16} className="text-white" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden bg-npp-blue flex items-center justify-center">
+              <Image
+                src="/images/npp-flag.png"
+                alt="NPP"
+                width={32}
+                height={32}
+                className="w-8 h-8 object-cover"
+              />
             </div>
-            <span className="font-bold text-sm text-gray-900">Admin Dashboard</span>
+            <div>
+              <span className="font-bold text-sm text-gray-900 block leading-tight">NPP Admin</span>
+              <span className="text-[10px] text-npp-red font-medium">Dashboard</span>
+            </div>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-gray-600">
             <X size={20} />
@@ -94,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-ghana-green text-white shadow-sm'
+                    ? 'bg-npp-blue text-white shadow-sm'
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
@@ -124,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <div className="p-3 border-t border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-ghana-green/10 flex items-center justify-center text-ghana-green font-bold text-xs">
+            <div className="w-8 h-8 rounded-full bg-npp-blue/10 flex items-center justify-center text-npp-blue font-bold text-xs">
               {user.name.charAt(0)}
             </div>
             <div className="flex-1 min-w-0">

@@ -47,20 +47,20 @@ export default function AdminLoginPage() {
   if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-ghana-green" />
+        <Loader2 className="w-8 h-8 animate-spin text-npp-blue" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-ghana-green/5 via-white to-ghana-gold/5 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-npp-blue/5 via-white to-npp-red/5 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ghana-green/10 mb-4">
-            <Shield className="w-8 h-8 text-ghana-green" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-npp-blue/10 mb-4">
+            <Shield className="w-8 h-8 text-npp-blue" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Admin Portal</h1>
-          <p className="text-gray-500 mt-1">Constituency Management System</p>
+          <p className="text-gray-500 mt-1">NPP Constituency Management</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 space-y-5">
@@ -73,8 +73,8 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="admin@constituency.gov.gh"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ghana-green focus:ring-2 focus:ring-ghana-green/20 outline-none transition-all text-sm"
+              placeholder="admin@npp-constituency.org.gh"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-npp-blue focus:ring-2 focus:ring-npp-blue/20 outline-none transition-all text-sm"
               autoComplete="email"
             />
           </div>
@@ -90,7 +90,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ghana-green focus:ring-2 focus:ring-ghana-green/20 outline-none transition-all text-sm pr-12"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-npp-blue focus:ring-2 focus:ring-npp-blue/20 outline-none transition-all text-sm pr-12"
                 autoComplete="current-password"
               />
               <button
@@ -106,7 +106,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-ghana-green text-white font-semibold hover:bg-ghana-green/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-xl bg-npp-blue text-white font-semibold hover:bg-npp-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

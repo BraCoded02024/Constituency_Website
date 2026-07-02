@@ -65,13 +65,13 @@ export default function AdminGalleryPage() {
     try { await api.gallery.delete(id); toast.success('Deleted'); load(); } catch { toast.error('Failed'); }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-ghana-green" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-npp-blue" /></div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div><h1 className="text-lg font-bold text-gray-900">Gallery</h1><p className="text-sm text-gray-500">{items.length} items</p></div>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-ghana-green text-white rounded-xl text-sm font-medium hover:bg-ghana-green/90"><Plus size={16} /> Add Image</button>
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-npp-blue text-white rounded-xl text-sm font-medium hover:bg-npp-blue/90"><Plus size={16} /> Add Image</button>
       </div>
 
       {showForm && (
@@ -82,23 +82,23 @@ export default function AdminGalleryPage() {
               <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
             <div className="p-5 space-y-4">
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Title</label><input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Title</label><input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" /></div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
                 <div className="flex gap-2">
-                  <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" />
+                  <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" />
                   <label className="flex items-center gap-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">{uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}<input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" /></label>
                 </div>
                 {form.image && <img src={form.image} alt="" className="mt-2 w-full h-40 object-cover rounded-lg" />}
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-sm font-medium text-gray-700 mb-1">Category</label><select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none">{CATEGORIES.map(c => <option key={c}>{c}</option>)}</select></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-1">Date</label><input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">Category</label><select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none">{CATEGORIES.map(c => <option key={c}>{c}</option>)}</select></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">Date</label><input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" /></div>
               </div>
             </div>
             <div className="p-5 border-t border-gray-100 flex justify-end gap-2">
               <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl text-sm font-medium bg-ghana-green text-white hover:bg-ghana-green/90 disabled:opacity-50 flex items-center gap-2">{saving && <Loader2 size={14} className="animate-spin" />}{editing ? 'Update' : 'Add'}</button>
+              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl text-sm font-medium bg-npp-blue text-white hover:bg-npp-blue/90 disabled:opacity-50 flex items-center gap-2">{saving && <Loader2 size={14} className="animate-spin" />}{editing ? 'Update' : 'Add'}</button>
             </div>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function AdminGalleryPage() {
             <div className="relative">
               <img src={item.image} alt={item.title} className="w-full h-32 object-cover" />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                <button onClick={() => openEdit(item)} className="p-2 rounded-full bg-white/90 text-ghana-green hover:bg-white"><Pencil size={14} /></button>
+                <button onClick={() => openEdit(item)} className="p-2 rounded-full bg-white/90 text-npp-blue hover:bg-white"><Pencil size={14} /></button>
                 <button onClick={() => handleDelete(item.id)} className="p-2 rounded-full bg-white/90 text-red-500 hover:bg-white"><Trash2 size={14} /></button>
               </div>
             </div>

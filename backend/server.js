@@ -54,6 +54,7 @@ async function start() {
   const dashboardRouter = require('./routes/dashboard');
   const servicesRouter = require('./routes/services');
   const successStoriesRouter = require('./routes/successStories');
+  const delegatesRouter = require('./routes/delegates');
 
   app.use('/api/auth', authRouter);
   app.use('/api/announcements', announcementsRouter);
@@ -67,6 +68,7 @@ async function start() {
   app.use('/api/dashboard', dashboardRouter);
   app.use('/api/services', servicesRouter);
   app.use('/api/success-stories', successStoriesRouter);
+  app.use('/api/delegates', delegatesRouter);
 
   app.post('/api/upload', upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -75,7 +77,7 @@ async function start() {
   });
 
   app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Constituency Management API is running' });
+    res.json({ status: 'ok', message: 'NPP Constituency Management API is running' });
   });
 
   const server = app.listen(PORT, '0.0.0.0', () => {

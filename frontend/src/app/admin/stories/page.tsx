@@ -63,13 +63,13 @@ export default function AdminStoriesPage() {
     try { await api.successStories.delete(id); toast.success('Deleted'); load(); } catch { toast.error('Failed'); }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-ghana-green" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-npp-blue" /></div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div><h1 className="text-lg font-bold text-gray-900">Success Stories</h1><p className="text-sm text-gray-500">{items.length} stories</p></div>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-ghana-green text-white rounded-xl text-sm font-medium hover:bg-ghana-green/90"><Plus size={16} /> Add Story</button>
+        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-npp-blue text-white rounded-xl text-sm font-medium hover:bg-npp-blue/90"><Plus size={16} /> Add Story</button>
       </div>
 
       {showForm && (
@@ -80,13 +80,13 @@ export default function AdminStoriesPage() {
               <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
             <div className="p-5 space-y-4">
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Name</label><input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Story</label><textarea value={form.story} onChange={e => setForm(f => ({ ...f, story: e.target.value }))} rows={4} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none resize-none" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Year</label><input value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Name</label><input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Story</label><textarea value={form.story} onChange={e => setForm(f => ({ ...f, story: e.target.value }))} rows={4} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none resize-none" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Year</label><input value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value }))} className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" /></div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
                 <div className="flex gap-2">
-                  <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" />
+                  <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" />
                   <label className="flex items-center px-3 py-2.5 rounded-xl border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">{uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}<input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" /></label>
                 </div>
                 {form.image && <img src={form.image} alt="" className="mt-2 w-20 h-20 rounded-full object-cover" />}
@@ -94,7 +94,7 @@ export default function AdminStoriesPage() {
             </div>
             <div className="p-5 border-t border-gray-100 flex justify-end gap-2">
               <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl text-sm font-medium bg-ghana-green text-white hover:bg-ghana-green/90 disabled:opacity-50 flex items-center gap-2">{saving && <Loader2 size={14} className="animate-spin" />}{editing ? 'Update' : 'Create'}</button>
+              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-xl text-sm font-medium bg-npp-blue text-white hover:bg-npp-blue/90 disabled:opacity-50 flex items-center gap-2">{saving && <Loader2 size={14} className="animate-spin" />}{editing ? 'Update' : 'Create'}</button>
             </div>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function AdminStoriesPage() {
               <span className="text-[10px] text-gray-400">{item.year}</span>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
-              <button onClick={() => openEdit(item)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-ghana-green"><Pencil size={15} /></button>
+              <button onClick={() => openEdit(item)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-npp-blue"><Pencil size={15} /></button>
               <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"><Trash2 size={15} /></button>
             </div>
           </div>

@@ -50,7 +50,7 @@ export default function AdminConstituentsPage() {
     c.phone.includes(search)
   );
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-ghana-green" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-npp-blue" /></div>;
 
   return (
     <div className="space-y-4">
@@ -60,7 +60,7 @@ export default function AdminConstituentsPage() {
 
       <div className="relative">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, community, or phone..." className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ghana-green outline-none" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, community, or phone..." className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-npp-blue outline-none" />
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -82,7 +82,7 @@ export default function AdminConstituentsPage() {
                 <tr key={item.id} className="hover:bg-gray-50/50">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-ghana-green/10 flex items-center justify-center text-ghana-green font-bold text-[10px]">{item.fullName.charAt(0)}</div>
+                      <div className="w-7 h-7 rounded-full bg-npp-blue/10 flex items-center justify-center text-npp-blue font-bold text-[10px]">{item.fullName.charAt(0)}</div>
                       <span className="font-medium text-gray-900">{item.fullName}</span>
                     </div>
                   </td>

@@ -56,17 +56,17 @@ export default function ConcernsPage() {
         <PageHeader title="Share a Concern" subtitle="Report community issues directly" icon={MessageSquareWarning} />
         <div className="py-20 bg-gray-50">
           <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="max-w-lg mx-auto text-center px-4">
-            <div className="w-20 h-20 bg-ghana-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={40} className="text-ghana-green" />
+            <div className="w-20 h-20 bg-npp-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={40} className="text-npp-blue" />
             </div>
-            <h2 className="text-2xl font-bold text-ghana-black mb-4">Concern shared!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Concern shared!</h2>
             <p className="text-gray-600 mb-8">
               Thank you, {form.name}. Your concern about &ldquo;{form.subject}&rdquo; has been received.
               Our team will review it and take appropriate action. You may be contacted for follow-up.
             </p>
             <button
               onClick={() => { setSubmitted(false); setForm({ name: '', phone: '', community: '', category: '', subject: '', description: '', priority: 'Medium' }); }}
-              className="bg-ghana-green text-white px-6 py-3 rounded-xl font-semibold hover:bg-ghana-green-dark transition-colors"
+              className="bg-npp-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-npp-blue-dark transition-colors"
             >
               Share another concern
             </button>
@@ -88,10 +88,10 @@ export default function ConcernsPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div variants={fadeInUp} initial="hidden" animate="visible">
             {/* Info Notice */}
-            <div className="bg-ghana-gold/10 border border-ghana-gold/20 rounded-xl p-4 mb-6 flex items-start space-x-3">
-              <AlertTriangle size={20} className="text-ghana-gold-dark shrink-0 mt-0.5" />
+            <div className="bg-npp-red/10 border border-npp-red/20 rounded-xl p-4 mb-6 flex items-start space-x-3">
+              <AlertTriangle size={20} className="text-npp-red-dark shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-ghana-black">How it works</p>
+                <p className="text-sm font-semibold text-gray-900">How it works</p>
                 <p className="text-sm text-gray-600 mt-1">
                   Share your concern below. Our team will review and categorize it, then assign it for resolution.
                   You can track the status of your concern through our office.
@@ -100,9 +100,9 @@ export default function ConcernsPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-ghana-black mb-6 flex items-center">
-                <div className="w-10 h-10 bg-ghana-red/10 rounded-xl flex items-center justify-center mr-3">
-                  <MessageSquareWarning size={20} className="text-ghana-red" />
+              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-10 h-10 bg-npp-red/10 rounded-xl flex items-center justify-center mr-3">
+                  <MessageSquareWarning size={20} className="text-npp-red" />
                 </div>
                 Concern Details
               </h2>
@@ -211,7 +211,7 @@ export default function ConcernsPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-8 w-full bg-ghana-red text-white py-4 rounded-xl font-semibold text-lg hover:bg-ghana-red-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="mt-8 w-full bg-npp-red text-white py-4 rounded-xl font-semibold text-lg hover:bg-npp-red-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 {loading ? 'Sharing...' : 'Share Concern'}
               </button>

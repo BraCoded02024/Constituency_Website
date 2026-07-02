@@ -59,17 +59,17 @@ export default function VolunteerPage() {
         <PageHeader title="Volunteer" subtitle="Join our team of change-makers" icon={HandHeart} />
         <div className="py-20 bg-gray-50">
           <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="max-w-lg mx-auto text-center px-4">
-            <div className="w-20 h-20 bg-ghana-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={40} className="text-ghana-green" />
+            <div className="w-20 h-20 bg-npp-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={40} className="text-npp-blue" />
             </div>
-            <h2 className="text-2xl font-bold text-ghana-black mb-4">Welcome to the Team!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to the Team!</h2>
             <p className="text-gray-600 mb-8">
               Thank you for volunteering, {form.fullName}! We are excited to have you on board.
               Our team will contact you with details about upcoming volunteer activities.
             </p>
             <button
               onClick={() => { setSubmitted(false); setForm({ fullName: '', phone: '', email: '', age: '', community: '', area: '', motivation: '' }); }}
-              className="bg-ghana-green text-white px-6 py-3 rounded-xl font-semibold hover:bg-ghana-green-dark transition-colors"
+              className="bg-npp-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-npp-blue-dark transition-colors"
             >
               Register Another Volunteer
             </button>
@@ -99,10 +99,10 @@ export default function VolunteerPage() {
           >
             {benefits.map((item) => (
               <motion.div key={item.title} variants={staggerItem} className="text-center p-4">
-                <div className="w-12 h-12 bg-ghana-green/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <item.icon size={22} className="text-ghana-green" />
+                <div className="w-12 h-12 bg-npp-blue/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <item.icon size={22} className="text-npp-blue" />
                 </div>
-                <h3 className="font-semibold text-sm text-ghana-black">{item.title}</h3>
+                <h3 className="font-semibold text-sm text-gray-900">{item.title}</h3>
                 <p className="text-gray-500 text-xs mt-1">{item.description}</p>
               </motion.div>
             ))}
@@ -114,9 +114,9 @@ export default function VolunteerPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div variants={fadeInUp} initial="hidden" animate="visible">
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-ghana-black mb-6 flex items-center">
-                <div className="w-10 h-10 bg-ghana-gold/10 rounded-xl flex items-center justify-center mr-3">
-                  <HandHeart size={20} className="text-ghana-gold-dark" />
+              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-10 h-10 bg-npp-red/10 rounded-xl flex items-center justify-center mr-3">
+                  <HandHeart size={20} className="text-npp-red-dark" />
                 </div>
                 Volunteer Application
               </h2>
@@ -205,7 +205,7 @@ export default function VolunteerPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-8 w-full bg-ghana-green text-white py-4 rounded-xl font-semibold text-lg hover:bg-ghana-green-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="mt-8 w-full bg-npp-blue text-white py-4 rounded-xl font-semibold text-lg hover:bg-npp-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 {loading ? 'Submitting...' : 'Join as Volunteer'}
               </button>

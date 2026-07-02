@@ -71,8 +71,8 @@ export default function OpportunitiesPage() {
                   onClick={() => setFilter(type)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     filter === type
-                      ? 'bg-ghana-green text-white'
-                      : 'bg-white text-gray-600 hover:bg-ghana-green/10 border border-gray-200'
+                      ? 'bg-npp-blue text-white'
+                      : 'bg-white text-gray-600 hover:bg-npp-blue/10 border border-gray-200'
                   }`}
                 >
                   {type}
@@ -105,7 +105,7 @@ export default function OpportunitiesPage() {
                       </div>
                     </div>
 
-                    <h3 className="font-semibold text-xl text-ghana-black mb-3">{item.title}</h3>
+                    <h3 className="font-semibold text-xl text-gray-900 mb-3">{item.title}</h3>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">{item.description}</p>
 
                     <div className="mb-4">
@@ -113,7 +113,7 @@ export default function OpportunitiesPage() {
                       <div className="flex flex-wrap gap-2">
                         {item.requirements.map((req, i) => (
                           <span key={i} className="flex items-center text-xs bg-gray-50 text-gray-600 px-3 py-1 rounded-full">
-                            <CheckCircle size={12} className="mr-1 text-ghana-green" />
+                            <CheckCircle size={12} className="mr-1 text-npp-blue" />
                             {req}
                           </span>
                         ))}
@@ -126,14 +126,14 @@ export default function OpportunitiesPage() {
                           <Users size={14} className="mr-1" />
                           {item.applied} / {item.slots} slots filled
                         </span>
-                        <span className={`font-semibold ${slotsLeft <= 5 ? 'text-ghana-red' : 'text-ghana-green'}`}>
+                        <span className={`font-semibold ${slotsLeft <= 5 ? 'text-npp-red' : 'text-npp-blue'}`}>
                           {slotsLeft} left
                         </span>
                       </div>
                       <div className="w-full bg-gray-100 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all duration-500 ${
-                            percentFilled >= 90 ? 'bg-ghana-red' : percentFilled >= 60 ? 'bg-ghana-gold' : 'bg-ghana-green'
+                            percentFilled >= 90 ? 'bg-npp-red' : percentFilled >= 60 ? 'bg-npp-red' : 'bg-npp-blue'
                           }`}
                           style={{ width: `${percentFilled}%` }}
                         />

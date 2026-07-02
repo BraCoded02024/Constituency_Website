@@ -46,8 +46,8 @@ export default function GalleryPage() {
                 onClick={() => setFilter(cat)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   filter === cat
-                    ? 'bg-ghana-green text-white'
-                    : 'bg-white text-gray-600 hover:bg-ghana-green/10 border border-gray-200'
+                    ? 'bg-npp-blue text-white'
+                    : 'bg-white text-gray-600 hover:bg-npp-blue/10 border border-gray-200'
                 }`}
               >
                 {cat}
