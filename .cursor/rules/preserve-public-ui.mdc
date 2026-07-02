@@ -1,0 +1,32 @@
+---
+description: Do not rewrite the approved public homepage and layout
+globs: frontend/src/app/page.tsx,frontend/src/lib/demoContent.ts,frontend/src/components/Navbar.tsx,frontend/src/components/Footer.tsx
+alwaysApply: true
+---
+
+# Preserve approved public UI
+
+The user approved the current homepage design. **Do not rewrite or redesign it** unless they explicitly ask.
+
+## Approved homepage layout (`frontend/src/app/page.tsx`)
+
+Keep this structure intact:
+
+1. **HeroSection** — blue gradient hero (`bg-npp-blue`), two-column grid, headline + CTA buttons, **HeroOpsPanel** on the right
+2. **HeroOpsPanel** — glass card with module grid from `operationModules` and stats row
+3. **ServicesSection** — stats row + Quick Actions & Services cards
+4. **NewsSection** — horizontal announcement carousel with modal
+5. **ProjectsSection** — blue section, horizontal project carousel with modal
+6. **ConnectSection** — success stories + bottom CTA band
+
+## Recovery
+
+If the homepage is accidentally replaced, restore from:
+
+`frontend/src/app/_snapshots/homepage.approved.tsx`
+
+## When making changes
+
+- Prefer **surgical edits** (single line, one component) over full-file rewrites
+- Do **not** swap to alternate layouts (e.g. `npp-colours.png` banner-only hero, `publicModules`-only nav) unless explicitly requested
+- Delegate admin-only changes must **not** remove HeroOpsPanel or change section order — only hide/relabel delegate-specific links if asked

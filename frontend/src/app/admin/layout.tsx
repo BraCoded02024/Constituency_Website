@@ -7,29 +7,37 @@ import Image from 'next/image';
 import {
   LayoutDashboard, Megaphone, FolderKanban, Calendar,
   AlertTriangle, Users, UserPlus, Image as ImageIcon, Star,
-  Briefcase, Settings, LogOut, Menu, X, ChevronLeft, Wrench, UserCheck,
+  Briefcase, Settings, LogOut, Menu, X, ChevronLeft, Wrench, UserCheck, UserCog,
 } from 'lucide-react';
+import { demoContent } from '@/lib/demoContent';
+import {
+  hasPrivilege,
+  navPrivilegeFromHref,
+  type AdminUser,
+  type Privilege,
+} from '@/lib/permissions';
 
-const navItems = [
-  { href: '/admin', label: 'Overview', icon: LayoutDashboard },
-  { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
-  { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
-  { href: '/admin/concerns', label: 'Concerns', icon: AlertTriangle },
-  { href: '/admin/events', label: 'Events', icon: Calendar },
-  { href: '/admin/opportunities', label: 'Opportunities', icon: Briefcase },
-  { href: '/admin/services', label: 'Services', icon: Wrench },
-  { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon },
-  { href: '/admin/stories', label: 'Success Stories', icon: Star },
-  { href: '/admin/constituents', label: 'Constituents', icon: Users },
-  { href: '/admin/volunteers', label: 'Volunteers', icon: UserPlus },
-  { href: '/admin/delegates', label: 'Delegates', icon: UserCheck },
-  { href: '/admin/settings', label: 'Settings', icon: Settings },
+const navItems: { href: string; label: string; icon: typeof LayoutDashboard; privilege: Privilege }[] = [
+  { href: '/admin', label: 'Overview', icon: LayoutDashboard, privilege: 'dashboard' },
+  { href: '/admin/announcements', label: 'Announcements', icon: Megaphone, privilege: 'announcements' },
+  { href: '/admin/projects', label: 'Projects', icon: FolderKanban, privilege: 'projects' },
+  { href: '/admin/concerns', label: 'Concerns', icon: AlertTriangle, privilege: 'concerns' },
+  { href: '/admin/events', label: 'Events', icon: Calendar, privilege: 'events' },
+  { href: '/admin/opportunities', label: 'Opportunities', icon: Briefcase, privilege: 'opportunities' },
+  { href: '/admin/services', label: 'Services', icon: Wrench, privilege: 'services' },
+  { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon, privilege: 'gallery' },
+  { href: '/admin/stories', label: 'Success Stories', icon: Star, privilege: 'stories' },
+  { href: '/admin/constituents', label: 'Constituents', icon: Users, privilege: 'constituents' },
+  { href: '/admin/volunteers', label: 'Volunteers', icon: UserPlus, privilege: 'volunteers' },
+  { href: '/admin/delegates', label: 'Delegates', icon: UserCheck, privilege: 'delegates' },
+  { href: '/admin/staff', label: 'Staff & Roles', icon: UserCog, privilege: 'staff' },
+  { href: '/admin/settings', label: 'Settings', icon: Settings, privilege: 'settings' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -44,7 +52,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
     try {
-      setUser(JSON.parse(stored));
+      const parsed = JSON.parse(stored) as AdminUser;
+      setUser(parsed);
+
+      const required = navPrivilegeFromHref(pathname);
+      if (pathname !== '/admin/login' && !hasPrivilege(parsed, required)) {
+        const firstAllowed = navItems.find((item) => hasPrivilege(parsed, item.privilege));
+        router.replace(firstAllowed?.href || '/admin/login');
+      }
     } catch {
       router.replace('/admin/login');
     }
@@ -53,6 +68,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!mounted) return null;
   if (pathname === '/admin/login') return <>{children}</>;
   if (!user) return null;
+
+  const visibleNav = navItems.filter((item) => hasPrivilege(user, item.privilege));
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
@@ -86,8 +103,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               />
             </div>
             <div>
-              <span className="font-bold text-sm text-gray-900 block leading-tight">NPP Admin</span>
-              <span className="text-[10px] text-npp-red font-medium">Dashboard</span>
+              <span className="font-bold text-sm text-gray-900 block leading-tight">{demoContent.constituency.shortName}</span>
+              <span className="text-[10px] text-npp-red font-medium">Operations Admin</span>
             </div>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-gray-600">
@@ -96,7 +113,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
-          {navItems.map(item => {
+          {visibleNav.map(item => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
               <Link
@@ -140,7 +157,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-gray-900 truncate">{user.name}</p>
-              <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
+              <p className="text-[10px] text-gray-500 truncate">{user.role === 'super_admin' ? 'Super Admin' : 'Staff'}</p>
             </div>
           </div>
         </div>

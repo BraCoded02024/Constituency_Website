@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { demoContent } from '@/lib/demoContent';
 import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -59,8 +60,8 @@ export default function AdminLoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-npp-blue/10 mb-4">
             <Shield className="w-8 h-8 text-npp-blue" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Portal</h1>
-          <p className="text-gray-500 mt-1">NPP Constituency Management</p>
+          <h1 className="text-2xl font-bold text-gray-900">Operations Admin</h1>
+          <p className="text-gray-500 mt-1">{demoContent.platform.name}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 space-y-5">

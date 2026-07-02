@@ -66,6 +66,8 @@ const dashboardRouter = require('./routes/dashboard');
 const servicesRouter = require('./routes/services');
 const successStoriesRouter = require('./routes/successStories');
 const delegatesRouter = require('./routes/delegates');
+const staffRouter = require('./routes/staff');
+const { authenticateToken } = require('./middleware/auth');
 
 app.use('/api/auth', authRouter);
 app.use('/api/announcements', announcementsRouter);
@@ -80,15 +82,16 @@ app.use('/api/dashboard', dashboardRouter);
 app.use('/api/services', servicesRouter);
 app.use('/api/success-stories', successStoriesRouter);
 app.use('/api/delegates', delegatesRouter);
+app.use('/api/staff', staffRouter);
 
-app.post('/api/upload', upload.single('file'), (req, res) => {
+app.post('/api/upload', authenticateToken, upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   const url = `/uploads/${req.file.filename}`;
   res.json({ url, filename: req.file.filename });
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'NPP Constituency Management API is running' });
+  res.json({ status: 'ok', message: 'NPP Suynani East Operations API is running' });
 });
 
 module.exports = app;

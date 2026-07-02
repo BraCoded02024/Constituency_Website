@@ -71,11 +71,11 @@ async function uploadFile(file: File): Promise<{ url: string; filename: string }
 export const api = {
   auth: {
     login: (email: string, password: string) =>
-      fetcher<{ token: string; user: { id: string; email: string; name: string; role: string } }>(
+      fetcher<{ token: string; user: import('@/lib/permissions').AdminUser }>(
         '/auth/login',
         { method: 'POST', body: JSON.stringify({ email, password }) },
       ),
-    me: () => authFetcher('/auth/me'),
+    me: () => authFetcher<import('@/lib/permissions').AdminUser>('/auth/me'),
     updateProfile: (data: Record<string, string>) =>
       authFetcher('/auth/profile', { method: 'PUT', body: JSON.stringify(data) }),
   },
@@ -224,5 +224,16 @@ export const api = {
 
   dashboard: {
     getStats: () => authFetcher('/dashboard/stats'),
+  },
+
+  staff: {
+    getAll: () => authFetcher<import('@/lib/permissions').AdminUser[]>('/staff'),
+    getMeta: () => authFetcher<{ privileges: string[]; labels: Record<string, string> }>('/staff/meta'),
+    create: (data: Record<string, unknown>) =>
+      authFetcher('/staff', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: Record<string, unknown>) =>
+      authFetcher(`/staff/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deactivate: (id: string) =>
+      authFetcher(`/staff/${id}`, { method: 'DELETE' }),
   },
 };

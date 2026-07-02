@@ -98,3 +98,28 @@ input:focus, textarea:focus, select:focus {
   border-radius: 9999px;
   background: linear-gradient(90deg, var(--npp-red) 0%, var(--npp-red) 70%, #d4a800 100%);
 }
+
+@keyframes hero-glow-pulse {
+  0%, 100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.55; transform: translateX(-50%) scale(1.08); }
+}
+
+@keyframes hero-shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+.hero-glow {
+  animation: hero-glow-pulse 6s ease-in-out infinite;
+}
+
+.hero-badge-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: hero-shimmer 4s linear infinite;
+}

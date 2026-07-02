@@ -1,10 +1,10 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const { getPoolConfig } = require('../lib/dbConfig');
+const { ALL_PRIVILEGES } = require('../lib/permissions');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = new Pool(getPoolConfig());
 
 function getDb() {
   return pool;
@@ -155,6 +155,12 @@ async function initializeDatabase() {
   await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS voters_id TEXT');
   await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_name TEXT');
   await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_code TEXT');
+  await pool.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS privileges TEXT DEFAULT \'[]\'');
+  await pool.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true');
+  await pool.query(
+    `UPDATE admins SET role = 'super_admin', privileges = $1 WHERE role = 'admin'`,
+    [JSON.stringify(ALL_PRIVILEGES)],
+  );
 
   await seedIfEmpty();
   console.log('Database initialized successfully');
@@ -174,9 +180,17 @@ async function seedAll() {
     await client.query('BEGIN');
 
     await client.query(
-      'INSERT INTO admins (id, name, email, password, role, created_at) VALUES ($1,$2,$3,$4,$5,$6)',
-      [uuidv4(), 'Admin', process.env.ADMIN_EMAIL || 'admin@constituency.gov.gh',
-       bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'Admin@2026', 10), 'admin', '2026-01-01']
+      'INSERT INTO admins (id, name, email, password, role, privileges, is_active, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+      [
+        uuidv4(),
+        'Super Admin',
+        process.env.ADMIN_EMAIL || 'admin@constituency.gov.gh',
+        bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'Admin@2026', 10),
+        'super_admin',
+        JSON.stringify(ALL_PRIVILEGES),
+        true,
+        '2026-01-01',
+      ],
     );
 
     const services = [
