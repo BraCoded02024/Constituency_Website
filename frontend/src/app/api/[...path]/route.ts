@@ -6,7 +6,9 @@ async function handler(req: Request, ctx: RouteContext) {
   const { path } = await ctx.params;
   try {
     return await proxyToBackend(req, `/api/${path.join('/')}`);
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Backend unavailable';
+    console.error('[api proxy]', message);
     return Response.json({ error: 'Backend unavailable' }, { status: 502 });
   }
 }

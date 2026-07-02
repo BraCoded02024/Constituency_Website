@@ -1,5 +1,10 @@
 function getBackendBase(): string {
-  return (process.env.BACKEND_INTERNAL_URL ?? 'http://localhost:5001').replace(/\/$/, '');
+  const internal = process.env.BACKEND_INTERNAL_URL?.replace(/\/$/, '');
+  if (internal) return internal;
+  if (process.env.VERCEL) {
+    throw new Error('BACKEND_INTERNAL_URL missing — redeploy after vercel.json services binding is active');
+  }
+  return 'http://localhost:5001';
 }
 
 export function backendUrl(path: string, search = ''): string {
