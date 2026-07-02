@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const os = require('os');
 const dotenv = require('dotenv');
 const multer = require('multer');
 const fs = require('fs');
@@ -9,8 +10,19 @@ dotenv.config();
 
 const { initializeDatabase, closeDb } = require('./data/database');
 
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+function resolveUploadsDir() {
+  if (process.env.UPLOADS_DIR) return process.env.UPLOADS_DIR;
+  // Vercel serverless: only /tmp is writable
+  if (process.env.VERCEL) return path.join(os.tmpdir(), 'cms-uploads');
+  return path.join(__dirname, 'uploads');
+}
+
+const uploadsDir = resolveUploadsDir();
+try {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+} catch (err) {
+  console.warn('Uploads directory unavailable:', uploadsDir, err.message);
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
