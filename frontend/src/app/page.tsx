@@ -28,6 +28,7 @@ import { api } from '@/lib/api';
 import { demoContent, operationModules } from '@/lib/demoContent';
 import { seedAnnouncements, seedProjects, seedSuccessStories } from '@/lib/seedContent';
 import SafeImage from '@/components/SafeImage';
+import heroElephant from '@/assets/npp-hero-elephant.png';
 
 interface Announcement {
   id: string;
@@ -162,10 +163,10 @@ function HeroSection() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-0"
+              className="absolute inset-0 h-full w-full"
             >
               <Image
-                src="/images/npp-hero-elephant.png"
+                src={heroElephant}
                 alt="NPP elephant carrying Ghana — strength for the nation"
                 fill
                 priority
@@ -216,15 +217,15 @@ function HeroSection() {
             <motion.div
               animate={{ y: [0, -12, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-0"
+              className="absolute inset-0 h-full w-full"
             >
               <Image
-                src="/images/npp-hero-elephant.png"
+                src={heroElephant}
                 alt="NPP elephant carrying Ghana — strength for the nation"
                 fill
                 priority
                 className="object-contain object-bottom drop-shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
-                sizes="55vw"
+                sizes="(min-width: 1024px) 55vw, 100vw"
               />
             </motion.div>
           </motion.div>
