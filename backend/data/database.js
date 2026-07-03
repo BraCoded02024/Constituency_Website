@@ -1,6 +1,3 @@
-const { Pool } = require('pg');
-const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
 const { getPoolConfig } = require('../lib/dbConfig');
 const { ALL_PRIVILEGES } = require('../lib/permissions');
 
@@ -8,6 +5,7 @@ let pool = null;
 
 function getDb() {
   if (!pool) {
+    const { Pool } = require('pg');
     pool = new Pool(getPoolConfig());
   }
   return pool;
@@ -183,6 +181,8 @@ async function seedIfEmpty() {
 }
 
 async function seedAll() {
+  const bcrypt = require('bcryptjs');
+  const { uuidv4 } = require('../lib/uuid');
   const client = await getDb().connect();
   try {
     await client.query('BEGIN');
