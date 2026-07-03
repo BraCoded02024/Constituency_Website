@@ -7,6 +7,8 @@
     "dev:backend": "npm run dev --prefix backend",
     "start:frontend": "npm run start --prefix frontend",
     "start:backend": "npm start --prefix backend",
-    "build:frontend": "npm run build --prefix frontend"
+    "build:frontend": "npm run build --prefix frontend",
+    "build:prod": "npm ci --prefix backend && npm ci --prefix frontend && npm run build --prefix frontend",
+    "start:prod": "pm2 start deploy/aws/ecosystem.config.cjs"
   }
 }
