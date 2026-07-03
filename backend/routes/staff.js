@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const { getDb } = require('../data/database');
+const { getDb } = require('../data/db');
 const { authenticateToken } = require('../middleware/auth');
 const { authorizePrivilege } = require('../middleware/authorize');
 const {

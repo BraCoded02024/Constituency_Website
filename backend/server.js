@@ -8,8 +8,8 @@ const fs = require('fs');
 
 dotenv.config();
 
-const db = require('./data/database');
-const { isCloudinaryEnabled, uploadBuffer } = require('./lib/cloudinary');
+const db = require('./data/db');
+const cloudinaryLib = () => require('./lib/cloudinary');
 
 function resolveUploadsDir() {
   if (process.env.UPLOADS_DIR) return process.env.UPLOADS_DIR;
@@ -17,9 +17,9 @@ function resolveUploadsDir() {
   return path.join(__dirname, 'uploads');
 }
 
-const useCloudinary = isCloudinaryEnabled();
+const useCloudinary = () => cloudinaryLib().isCloudinaryEnabled();
 
-const uploadsDir = useCloudinary ? null : resolveUploadsDir();
+const uploadsDir = useCloudinary() ? null : resolveUploadsDir();
 if (uploadsDir) {
   try {
     fs.mkdirSync(uploadsDir, { recursive: true });
@@ -28,7 +28,7 @@ if (uploadsDir) {
   }
 }
 
-const storage = useCloudinary
+const storage = useCloudinary()
   ? multer.memoryStorage()
   : multer.diskStorage({
       destination: (req, file, cb) => cb(null, uploadsDir),
@@ -51,10 +51,21 @@ const upload = multer({
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const dbReady = db.initializeDatabase().catch((err) => {
-  console.error('Failed to initialize database:', err);
-  throw err;
-});
+let dbReady = null;
+function getDbReady() {
+  if (!dbReady) {
+    const init = db.initializeDatabase;
+    if (typeof init !== 'function') {
+      dbReady = Promise.reject(new Error('Database module failed to load on server'));
+    } else {
+      dbReady = init().catch((err) => {
+        console.error('Failed to initialize database:', err.message);
+        throw err;
+      });
+    }
+  }
+  return dbReady;
+}
 
 app.use(cors());
 app.use(express.json());
@@ -63,16 +74,21 @@ if (uploadsDir) {
 }
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'NPP Suynani East Operations API is running' });
+  res.json({
+    status: 'ok',
+    message: 'NPP Suynani East Operations API is running',
+    database: Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL),
+    cloudinary: useCloudinary(),
+  });
 });
 
 app.use(async (req, res, next) => {
   try {
-    await dbReady;
+    await getDbReady();
     next();
   } catch (err) {
     console.error('Database middleware error:', err.message);
-    res.status(503).json({ error: 'Database unavailable' });
+    res.status(503).json({ error: 'Database unavailable — check DATABASE_URL on Vercel' });
   }
 });
 
@@ -112,7 +128,8 @@ app.use('/api/staff', staffRouter);
 app.post('/api/upload', authenticateToken, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
-    if (useCloudinary) {
+    if (useCloudinary()) {
+      const { uploadBuffer } = cloudinaryLib();
       const result = await uploadBuffer(req.file.buffer, {
         public_id: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
       });
@@ -129,7 +146,7 @@ app.post('/api/upload', authenticateToken, upload.single('file'), async (req, re
 module.exports = app;
 
 if (require.main === module) {
-  dbReady
+  getDbReady()
     .then(() => {
       const server = app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server running on port ${PORT}`);

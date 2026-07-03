@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDb } = require('../data/database');
+const { getDb } = require('../data/db');
 const { authenticateToken } = require('../middleware/auth');
 
 router.get('/stats', authenticateToken, async (req, res) => {

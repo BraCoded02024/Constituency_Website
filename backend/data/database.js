@@ -302,6 +302,6 @@ async function closeDb() {
   }
 }
 
-exports.getDb = getDb;
-exports.initializeDatabase = initializeDatabase;
-exports.closeDb = closeDb;
+const api = { getDb, initializeDatabase, closeDb };
+module.exports = api;
+module.exports.default = api;
