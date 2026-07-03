@@ -4,14 +4,18 @@ const { v4: uuidv4 } = require('uuid');
 const { getPoolConfig } = require('../lib/dbConfig');
 const { ALL_PRIVILEGES } = require('../lib/permissions');
 
-const pool = new Pool(getPoolConfig());
+let pool = null;
 
 function getDb() {
+  if (!pool) {
+    pool = new Pool(getPoolConfig());
+  }
   return pool;
 }
 
 async function initializeDatabase() {
-  await pool.query(`
+  const db = getDb();
+  await db.query(`
     CREATE TABLE IF NOT EXISTS admins (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -151,13 +155,13 @@ async function initializeDatabase() {
     );
   `);
 
-  await pool.query('ALTER TABLE projects ADD COLUMN IF NOT EXISTS image TEXT');
-  await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS voters_id TEXT');
-  await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_name TEXT');
-  await pool.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_code TEXT');
-  await pool.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS privileges TEXT DEFAULT \'[]\'');
-  await pool.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true');
-  await pool.query(
+  await db.query('ALTER TABLE projects ADD COLUMN IF NOT EXISTS image TEXT');
+  await db.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS voters_id TEXT');
+  await db.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_name TEXT');
+  await db.query('ALTER TABLE delegates ADD COLUMN IF NOT EXISTS polling_station_code TEXT');
+  await db.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS privileges TEXT DEFAULT \'[]\'');
+  await db.query('ALTER TABLE admins ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true');
+  await db.query(
     `UPDATE admins SET role = 'super_admin', privileges = $1 WHERE role = 'admin'`,
     [JSON.stringify(ALL_PRIVILEGES)],
   );
@@ -167,7 +171,7 @@ async function initializeDatabase() {
 }
 
 async function seedIfEmpty() {
-  const { rows } = await pool.query('SELECT COUNT(*) as count FROM admins');
+  const { rows } = await getDb().query('SELECT COUNT(*) as count FROM admins');
   if (parseInt(rows[0].count) === 0) {
     console.log('Seeding database with default data...');
     await seedAll();
@@ -175,7 +179,7 @@ async function seedIfEmpty() {
 }
 
 async function seedAll() {
-  const client = await pool.connect();
+  const client = await getDb().connect();
   try {
     await client.query('BEGIN');
 
@@ -292,7 +296,12 @@ async function seedAll() {
 }
 
 async function closeDb() {
-  await pool.end();
+  if (pool) {
+    await pool.end();
+    pool = null;
+  }
 }
 
-module.exports = { getDb, initializeDatabase, closeDb };
+exports.getDb = getDb;
+exports.initializeDatabase = initializeDatabase;
+exports.closeDb = closeDb;

@@ -8,7 +8,7 @@ const fs = require('fs');
 
 dotenv.config();
 
-const { initializeDatabase, closeDb } = require('./data/database');
+const db = require('./data/database');
 
 function resolveUploadsDir() {
   if (process.env.UPLOADS_DIR) return process.env.UPLOADS_DIR;
@@ -45,7 +45,7 @@ const upload = multer({
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const dbReady = initializeDatabase().catch((err) => {
+const dbReady = db.initializeDatabase().catch((err) => {
   console.error('Failed to initialize database:', err);
   throw err;
 });
@@ -54,11 +54,16 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(uploadsDir));
 
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'NPP Suynani East Operations API is running' });
+});
+
 app.use(async (req, res, next) => {
   try {
     await dbReady;
     next();
-  } catch {
+  } catch (err) {
+    console.error('Database middleware error:', err.message);
     res.status(503).json({ error: 'Database unavailable' });
   }
 });
@@ -102,10 +107,6 @@ app.post('/api/upload', authenticateToken, upload.single('file'), (req, res) => 
   res.json({ url, filename: req.file.filename });
 });
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'NPP Suynani East Operations API is running' });
-});
-
 module.exports = app;
 
 if (require.main === module) {
@@ -116,11 +117,11 @@ if (require.main === module) {
       });
 
       process.on('SIGINT', () => {
-        closeDb();
+        db.closeDb();
         server.close(() => process.exit(0));
       });
       process.on('SIGTERM', () => {
-        closeDb();
+        db.closeDb();
         server.close(() => process.exit(0));
       });
     })
