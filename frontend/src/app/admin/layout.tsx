@@ -10,6 +10,7 @@ import {
   Briefcase, Settings, LogOut, Menu, X, ChevronLeft, Wrench, UserCheck, UserCog,
 } from 'lucide-react';
 import { demoContent } from '@/lib/demoContent';
+import { NPP_FLAG_SRC } from '@/lib/siteImages';
 import {
   hasPrivilege,
   navPrivilegeFromHref,
@@ -95,7 +96,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg overflow-hidden bg-npp-blue flex items-center justify-center">
               <Image
-                src="/images/npp-flag.png"
+                src={NPP_FLAG_SRC}
                 alt="NPP"
                 width={32}
                 height={32}

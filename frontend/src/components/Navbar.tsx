@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { NPP_FLAG_SRC } from '@/lib/siteImages';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu,
@@ -83,7 +84,7 @@ export default function Navbar() {
           >
             <div className="w-10 h-10 rounded-full overflow-hidden shadow-md group-hover:scale-105 transition-transform bg-white flex items-center justify-center">
               <Image
-                src="/images/npp-flag.png"
+                src={NPP_FLAG_SRC}
                 alt="NPP Logo"
                 width={40}
                 height={40}
@@ -180,7 +181,7 @@ export default function Navbar() {
               {/* Panel header */}
               <div className="flex items-center gap-3 px-5 pt-5 pb-4">
                 <div className="w-9 h-9 rounded-full overflow-hidden bg-white flex items-center justify-center shadow">
-                  <Image src="/images/npp-flag.png" alt="NPP" width={36} height={36} className="w-9 h-9 object-cover" />
+                  <Image src={NPP_FLAG_SRC} alt="NPP" width={36} height={36} className="w-9 h-9 object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-bold text-sm leading-tight truncate">{demoContent.constituency.name}</p>

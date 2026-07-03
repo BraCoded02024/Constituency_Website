@@ -28,7 +28,7 @@ import { api } from '@/lib/api';
 import { demoContent, operationModules } from '@/lib/demoContent';
 import { seedAnnouncements, seedProjects, seedSuccessStories } from '@/lib/seedContent';
 import SafeImage from '@/components/SafeImage';
-import heroElephant from '@/assets/npp-hero-elephant.png';
+import { HERO_ELEPHANT_SRC, NPP_FLAG_SRC } from '@/lib/siteImages';
 
 interface Announcement {
   id: string;
@@ -166,7 +166,7 @@ function HeroSection() {
               className="absolute inset-0 h-full w-full"
             >
               <Image
-                src={heroElephant}
+                src={HERO_ELEPHANT_SRC}
                 alt="NPP elephant carrying Ghana — strength for the nation"
                 fill
                 priority
@@ -220,7 +220,7 @@ function HeroSection() {
               className="absolute inset-0 h-full w-full"
             >
               <Image
-                src={heroElephant}
+                src={HERO_ELEPHANT_SRC}
                 alt="NPP elephant carrying Ghana — strength for the nation"
                 fill
                 priority
@@ -304,7 +304,7 @@ function HeroOpsPanel() {
       <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-md shadow-2xl overflow-hidden">
         <div className="bg-gradient-to-r from-npp-red/90 to-npp-red px-5 py-4 flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl overflow-hidden bg-white/20 ring-2 ring-white/30 shrink-0">
-            <Image src="/images/npp-flag.png" alt="NPP" width={44} height={44} className="w-full h-full object-cover" />
+            <Image src={NPP_FLAG_SRC} alt="NPP" width={44} height={44} className="w-full h-full object-cover" />
           </div>
           <div className="min-w-0">
             <p className="text-white font-bold text-sm leading-tight truncate">{demoContent.platform.name}</p>

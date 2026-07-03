@@ -20,6 +20,7 @@ import {
 import PageHeader from '@/components/PageHeader';
 import { fadeInUp, staggerContainer, staggerItem, slideInLeft, slideInRight } from '@/lib/motion';
 import { demoContent, operationModules } from '@/lib/demoContent';
+import { NPP_FLAG_SRC } from '@/lib/siteImages';
 
 const achievements = [
   { value: '45+', label: 'Projects Completed', icon: Building },
@@ -95,7 +96,7 @@ export default function AboutPage() {
                 <div className="w-full max-w-md mx-auto rounded-3xl shadow-2xl overflow-hidden border border-gray-100 bg-gradient-to-br from-npp-blue to-npp-blue-dark p-6 text-white">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-14 h-14 rounded-2xl overflow-hidden bg-white/15 ring-2 ring-white/25">
-                      <Image src="/images/npp-flag.png" alt="NPP" width={56} height={56} className="w-full h-full object-cover" />
+                      <Image src={NPP_FLAG_SRC} alt="NPP" width={56} height={56} className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <p className="font-bold text-lg leading-tight">{demoContent.platform.name}</p>

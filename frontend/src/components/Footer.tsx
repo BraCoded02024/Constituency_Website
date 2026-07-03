@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail, MapPin, Clock, Globe, MessageCircle, Share2, Play } from 'lucide-react';
 import { demoContent } from '@/lib/demoContent';
+import { NPP_FLAG_SRC } from '@/lib/siteImages';
 
 const quickLinks = [
   { href: '/announcements', label: 'Announcements' },
@@ -40,7 +41,7 @@ export default function Footer() {
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center ring-2 ring-white/10">
                 <Image
-                  src="/images/npp-flag.png"
+                  src={NPP_FLAG_SRC}
                   alt="NPP Logo"
                   width={40}
                   height={40}

@@ -9,28 +9,34 @@ const fs = require('fs');
 dotenv.config();
 
 const db = require('./data/database');
+const { isCloudinaryEnabled, uploadBuffer } = require('./lib/cloudinary');
 
 function resolveUploadsDir() {
   if (process.env.UPLOADS_DIR) return process.env.UPLOADS_DIR;
-  // Vercel serverless: only /tmp is writable
   if (process.env.VERCEL) return path.join(os.tmpdir(), 'cms-uploads');
   return path.join(__dirname, 'uploads');
 }
 
-const uploadsDir = resolveUploadsDir();
-try {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-} catch (err) {
-  console.warn('Uploads directory unavailable:', uploadsDir, err.message);
+const useCloudinary = isCloudinaryEnabled();
+
+const uploadsDir = useCloudinary ? null : resolveUploadsDir();
+if (uploadsDir) {
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  } catch (err) {
+    console.warn('Uploads directory unavailable:', uploadsDir, err.message);
+  }
 }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
+const storage = useCloudinary
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+      destination: (req, file, cb) => cb(null, uploadsDir),
+      filename: (req, file, cb) => {
+        const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+        cb(null, uniqueName);
+      },
+    });
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -52,7 +58,9 @@ const dbReady = db.initializeDatabase().catch((err) => {
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(uploadsDir));
+if (uploadsDir) {
+  app.use('/uploads', express.static(uploadsDir));
+}
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'NPP Suynani East Operations API is running' });
@@ -101,10 +109,21 @@ app.use('/api/success-stories', successStoriesRouter);
 app.use('/api/delegates', delegatesRouter);
 app.use('/api/staff', staffRouter);
 
-app.post('/api/upload', authenticateToken, upload.single('file'), (req, res) => {
+app.post('/api/upload', authenticateToken, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  const url = `/uploads/${req.file.filename}`;
-  res.json({ url, filename: req.file.filename });
+  try {
+    if (useCloudinary) {
+      const result = await uploadBuffer(req.file.buffer, {
+        public_id: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+      });
+      return res.json({ url: result.secure_url, filename: result.public_id });
+    }
+    const pathUrl = `/uploads/${req.file.filename}`;
+    res.json({ url: pathUrl, filename: req.file.filename });
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).json({ error: 'Upload failed' });
+  }
 });
 
 module.exports = app;
