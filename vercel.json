@@ -8,8 +8,7 @@
     "backend": {
       "root": "backend/",
       "framework": "express",
-      "entrypoint": "server.js",
-      "includeFiles": ["data/**", "routes/**", "lib/**", "middleware/**"]
+      "entrypoint": "server.js"
     }
   },
   "rewrites": [
