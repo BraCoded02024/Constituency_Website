@@ -13,6 +13,10 @@ function getDb() {
   return pool;
 }
 
+async function pingDatabase() {
+  await getDb().query('SELECT 1 AS ok');
+}
+
 async function initializeDatabase() {
   const db = getDb();
   await db.query(`
@@ -197,6 +201,12 @@ async function seedAll() {
       ],
     );
 
+    if (process.env.VERCEL) {
+      await client.query('COMMIT');
+      console.log('Seeded admin user on Vercel (demo content skipped)');
+      return;
+    }
+
     const services = [
       ['Birth & Death Registration', 'Register births and deaths within the constituency. Get certified copies of certificates.', 'FileText', 'Civil Services'],
       ['Business Registration Assistance', 'Get help with registering your business, obtaining permits, and accessing government programs.', 'Briefcase', 'Business'],
@@ -302,6 +312,6 @@ async function closeDb() {
   }
 }
 
-const api = { getDb, initializeDatabase, closeDb };
+const api = { getDb, pingDatabase, initializeDatabase, closeDb };
 module.exports = api;
 module.exports.default = api;

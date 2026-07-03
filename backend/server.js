@@ -74,27 +74,46 @@ if (uploadsDir) {
 }
 
 app.get('/api/health', async (req, res) => {
-  const hasDbUrl = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
-  const payload = {
-    status: 'ok',
-    message: 'NPP Suynani East Operations API is running',
-    database: hasDbUrl,
-    cloudinary: useCloudinary(),
-    dbConnected: false,
-  };
+  try {
+    const hasDbUrl = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
+    const payload = {
+      status: 'ok',
+      message: 'NPP Suynani East Operations API is running',
+      database: hasDbUrl,
+      cloudinary: useCloudinary(),
+      dbConnected: false,
+      vercel: Boolean(process.env.VERCEL),
+    };
 
-  if (req.query.check === 'db' && hasDbUrl) {
-    try {
-      await getDbReady();
-      await db.getDb().query('SELECT 1');
+    if (req.query.check === 'db') {
+      if (!hasDbUrl) {
+        return res.status(503).json({
+          ...payload,
+          status: 'error',
+          error: 'DATABASE_URL is not set in Vercel Environment Variables',
+        });
+      }
+      const ping = db.pingDatabase || db.default?.pingDatabase;
+      if (typeof ping !== 'function') {
+        return res.status(503).json({
+          ...payload,
+          status: 'error',
+          error: 'Database module failed to load',
+        });
+      }
+      await ping();
       payload.dbConnected = true;
-    } catch (err) {
-      console.error('Health DB check failed:', err.message);
-      return res.status(503).json({ ...payload, status: 'error', error: err.message });
     }
-  }
 
-  res.json(payload);
+    res.json(payload);
+  } catch (err) {
+    console.error('Health check failed:', err.message);
+    res.status(503).json({
+      status: 'error',
+      error: err.message,
+      hint: 'Use Supabase Session pooler (port 5432) or Transaction pooler (port 6543) in DATABASE_URL',
+    });
+  }
 });
 
 app.use(async (req, res, next) => {
