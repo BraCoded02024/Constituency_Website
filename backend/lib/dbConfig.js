@@ -19,7 +19,13 @@ function isSupabaseUrl(connectionString) {
 
 function getPoolConfig() {
   const connectionString = getDatabaseUrl();
-  const config = { connectionString };
+  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+  const config = {
+    connectionString,
+    max: isServerless ? 1 : 10,
+    idleTimeoutMillis: isServerless ? 5000 : 30000,
+    connectionTimeoutMillis: 15000,
+  };
 
   if (isSupabaseUrl(connectionString) || process.env.DB_SSL === 'true') {
     config.ssl = { rejectUnauthorized: false };

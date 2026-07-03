@@ -73,13 +73,28 @@ if (uploadsDir) {
   app.use('/uploads', express.static(uploadsDir));
 }
 
-app.get('/api/health', (req, res) => {
-  res.json({
+app.get('/api/health', async (req, res) => {
+  const hasDbUrl = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
+  const payload = {
     status: 'ok',
     message: 'NPP Suynani East Operations API is running',
-    database: Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL),
+    database: hasDbUrl,
     cloudinary: useCloudinary(),
-  });
+    dbConnected: false,
+  };
+
+  if (req.query.check === 'db' && hasDbUrl) {
+    try {
+      await getDbReady();
+      await db.getDb().query('SELECT 1');
+      payload.dbConnected = true;
+    } catch (err) {
+      console.error('Health DB check failed:', err.message);
+      return res.status(503).json({ ...payload, status: 'error', error: err.message });
+    }
+  }
+
+  res.json(payload);
 });
 
 app.use(async (req, res, next) => {
@@ -140,6 +155,13 @@ app.post('/api/upload', authenticateToken, upload.single('file'), async (req, re
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+app.use((err, req, res, next) => {
+  console.error('Unhandled route error:', err.message);
+  if (!res.headersSent) {
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

@@ -80,3 +80,4 @@ module.exports = {
   hasAnyPrivilege,
   serializeUser,
 };
+module.exports.default = module.exports;
