@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { websiteAdminEnabled } from '@/lib/permissions';
+import DelegateDashboard from '@/components/admin/DelegateDashboard';
 import {
   Users, AlertTriangle, FolderKanban, Megaphone,
   Calendar, UserPlus, TrendingUp, Clock, CheckCircle2, Loader2, Wrench, Star, ChevronRight, UserCheck,
@@ -33,6 +35,11 @@ interface DashboardStats {
 }
 
 export default function AdminOverviewPage() {
+  if (!websiteAdminEnabled) return <DelegateDashboard />;
+  return <WebsiteOverview />;
+}
+
+function WebsiteOverview() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -65,7 +72,7 @@ export default function AdminOverviewPage() {
     { label: 'Services', value: stats.totalServices, icon: Wrench, color: 'bg-slate-500', href: '/admin/services' },
     { label: 'Gallery', value: stats.totalGalleryItems, icon: CheckCircle2, color: 'bg-amber-500', href: '/admin/gallery' },
     { label: 'Success stories', value: stats.totalSuccessStories, icon: Star, color: 'bg-rose-500', href: '/admin/stories' },
-  ];
+  ].filter((card) => websiteAdminEnabled || card.href === '/admin/delegates');
 
   const statusColor = (s: string) => {
     if (s === 'Pending') return 'bg-yellow-100 text-yellow-700';
@@ -106,7 +113,7 @@ export default function AdminOverviewPage() {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
+      {websiteAdminEnabled && <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col min-h-0">
           <div className="p-4 border-b border-gray-100 flex items-center gap-2 flex-wrap">
             <Link href="/admin/concerns" className="flex items-center gap-2 min-w-0 flex-1 hover:opacity-80 transition-opacity">
@@ -241,7 +248,7 @@ export default function AdminOverviewPage() {
             )}
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

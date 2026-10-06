@@ -1,24 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useIsClient, useLocalStorageRaw, writeLocalStorage } from '@/lib/useIsClient';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
   LayoutDashboard, Megaphone, FolderKanban, Calendar,
   AlertTriangle, Users, UserPlus, Image as ImageIcon, Star,
-  Briefcase, Settings, LogOut, Menu, X, ChevronLeft, Wrench, UserCheck, UserCog,
+  Briefcase, Settings, LogOut, Menu, X, ChevronDown, ChevronLeft, Globe, Wrench, UserCheck, UserCog,
+  MapPinned, Landmark, Tags, BarChart3, FileBarChart, History, Bell, MessageSquare,
 } from 'lucide-react';
+import FollowUpAlert from '@/components/admin/FollowUpAlert';
+import FollowUpBell from '@/components/admin/FollowUpBell';
 import { demoContent } from '@/lib/demoContent';
 import { NPP_FLAG_SRC } from '@/lib/siteImages';
 import {
   hasPrivilege,
   navPrivilegeFromHref,
+  publicSiteEnabled,
+  websiteAdminEnabled,
   type AdminUser,
   type Privilege,
 } from '@/lib/permissions';
 
-const navItems: { href: string; label: string; icon: typeof LayoutDashboard; privilege: Privilege }[] = [
+type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; privilege: Privilege };
+
+const navItems: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard, privilege: 'dashboard' },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone, privilege: 'announcements' },
   { href: '/admin/projects', label: 'Projects', icon: FolderKanban, privilege: 'projects' },
@@ -31,50 +39,98 @@ const navItems: { href: string; label: string; icon: typeof LayoutDashboard; pri
   { href: '/admin/constituents', label: 'Constituents', icon: Users, privilege: 'constituents' },
   { href: '/admin/volunteers', label: 'Volunteers', icon: UserPlus, privilege: 'volunteers' },
   { href: '/admin/delegates', label: 'Delegates', icon: UserCheck, privilege: 'delegates' },
+  { href: '/admin/follow-ups', label: 'Follow-ups', icon: Bell, privilege: 'delegates' },
+  { href: '/admin/sms', label: 'SMS', icon: MessageSquare, privilege: 'delegates' },
+  { href: '/admin/survey-dashboard', label: 'Survey Dashboard', icon: BarChart3, privilege: 'delegates' },
+  { href: '/admin/delegate-reports', label: 'Delegate Reports', icon: FileBarChart, privilege: 'delegates' },
+  { href: '/admin/electoral-areas', label: 'Electoral Areas', icon: MapPinned, privilege: 'delegates' },
+  { href: '/admin/polling-stations', label: 'Polling Stations', icon: Landmark, privilege: 'delegates' },
+  { href: '/admin/delegate-categories', label: 'Delegate Categories', icon: Tags, privilege: 'delegates' },
+  { href: '/admin/activity', label: 'Activity', icon: History, privilege: 'delegates' },
   { href: '/admin/staff', label: 'Staff & Roles', icon: UserCog, privilege: 'staff' },
   { href: '/admin/settings', label: 'Settings', icon: Settings, privilege: 'settings' },
 ];
 
+function NavLink({
+  item,
+  pathname,
+  onNavigate,
+}: {
+  item: NavItem;
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const isActive = isNavActive(pathname, item.href);
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+        isActive
+          ? 'bg-npp-blue text-white shadow-sm'
+          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+      }`}
+    >
+      <item.icon size={18} />
+      {item.label}
+    </Link>
+  );
+}
+
+function isNavActive(pathname: string, href: string) {
+  return pathname === href || (href !== '/admin' && pathname.startsWith(href));
+}
+
+function parseAdminUser(raw: string | null): AdminUser | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as AdminUser;
+  } catch {
+    return null;
+  }
+}
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<AdminUser | null>(null);
+  const mounted = useIsClient();
+  const token = useLocalStorageRaw('admin_token');
+  const storedUser = useLocalStorageRaw('admin_user');
+  const user = useMemo(() => parseAdminUser(storedUser), [storedUser]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const onWebsiteRoute = navItems.some(
+    (item) => item.privilege !== 'delegates' && isNavActive(pathname, item.href),
+  );
+  const [websiteOpen, setWebsiteOpen] = useState(onWebsiteRoute);
 
   useEffect(() => {
-    setMounted(true);
-    if (pathname === '/admin/login') return;
+    if (onWebsiteRoute) setWebsiteOpen(true);
+  }, [onWebsiteRoute]);
 
-    const token = localStorage.getItem('admin_token');
-    const stored = localStorage.getItem('admin_user');
-    if (!token || !stored) {
+  useEffect(() => {
+    if (!mounted || pathname === '/admin/login') return;
+    if (!token || !user) {
       router.replace('/admin/login');
       return;
     }
-    try {
-      const parsed = JSON.parse(stored) as AdminUser;
-      setUser(parsed);
-
-      const required = navPrivilegeFromHref(pathname);
-      if (pathname !== '/admin/login' && !hasPrivilege(parsed, required)) {
-        const firstAllowed = navItems.find((item) => hasPrivilege(parsed, item.privilege));
-        router.replace(firstAllowed?.href || '/admin/login');
-      }
-    } catch {
-      router.replace('/admin/login');
+    const required = navPrivilegeFromHref(pathname);
+    if (!hasPrivilege(user, required)) {
+      const firstAllowed = navItems.find((item) => hasPrivilege(user, item.privilege));
+      router.replace(firstAllowed?.href || '/admin/login');
     }
-  }, [pathname, router]);
+  }, [mounted, pathname, token, user, router]);
 
   if (!mounted) return null;
   if (pathname === '/admin/login') return <>{children}</>;
   if (!user) return null;
 
   const visibleNav = navItems.filter((item) => hasPrivilege(user, item.privilege));
+  const visibleDelegateNav = visibleNav.filter((item) => item.privilege === 'delegates');
+  const visibleWebsiteNav = visibleNav.filter((item) => item.privilege !== 'delegates');
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_token');
-    localStorage.removeItem('admin_user');
+    writeLocalStorage('admin_token', null);
+    writeLocalStorage('admin_user', null);
     router.push('/admin/login');
   };
 
@@ -114,34 +170,46 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
-          {visibleNav.map(item => {
-            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-npp-blue text-white shadow-sm'
+          {visibleDelegateNav.map((item) => (
+            <NavLink key={item.href} item={item} pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
+          ))}
+
+          {websiteAdminEnabled && visibleWebsiteNav.length > 0 && (
+            <div className={visibleDelegateNav.length > 0 ? 'pt-2' : undefined}>
+              <button
+                type="button"
+                onClick={() => setWebsiteOpen((open) => !open)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  onWebsiteRoute && !websiteOpen
+                    ? 'bg-npp-blue/10 text-npp-blue'
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
-                <item.icon size={18} />
-                {item.label}
-              </Link>
-            );
-          })}
+                <Globe size={18} />
+                <span className="flex-1 text-left">Website</span>
+                <ChevronDown size={16} className={`transition-transform ${websiteOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {websiteOpen && (
+                <div className="mt-0.5 ml-3 pl-2 border-l border-gray-200 space-y-0.5">
+                  {visibleWebsiteNav.map((item) => (
+                    <NavLink key={item.href} item={item} pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         <div className="p-3 border-t border-gray-100 space-y-2">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all"
-          >
-            <ChevronLeft size={18} />
-            Back to Site
-          </Link>
+          {publicSiteEnabled && (
+            <Link
+              href="/"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all"
+            >
+              <ChevronLeft size={18} />
+              Back to Site
+            </Link>
+          )}
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all"
@@ -164,17 +232,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-gray-200 px-4 lg:px-6 h-14 flex items-center gap-4">
+      <div className="flex-1 flex flex-col min-h-screen min-w-0 w-full">
+        <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur border-b border-gray-200 px-4 lg:px-6 h-14 flex items-center gap-4">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-600 hover:text-gray-900">
             <Menu size={22} />
           </button>
-          <h2 className="text-sm font-semibold text-gray-700 capitalize">
+          <h2 className="text-sm font-semibold text-gray-700 capitalize flex-1">
             {pathname === '/admin' ? 'Overview' : pathname.split('/').pop()?.replace(/-/g, ' ') || ''}
           </h2>
+          {hasPrivilege(user, 'delegates') && <FollowUpBell />}
         </header>
 
-        <main className="flex-1 p-4 lg:p-6">
+        <main className="flex-1 min-w-0 p-4 lg:p-6">
+          {hasPrivilege(user, 'delegates') && pathname !== '/admin/follow-ups' && <FollowUpAlert />}
           {children}
         </main>
       </div>

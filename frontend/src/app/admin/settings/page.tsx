@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { api } from '@/lib/api';
+import { useLocalStorageRaw, writeLocalStorage } from '@/lib/useIsClient';
 import { Loader2, User, Lock, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -13,22 +14,28 @@ export default function AdminSettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('admin_user');
-    if (stored) {
-      const user = JSON.parse(stored);
-      setName(user.name);
-      setEmail(user.email);
+  const storedUser = useLocalStorageRaw('admin_user');
+  const parsedUser = useMemo(() => {
+    if (!storedUser) return null;
+    try {
+      return JSON.parse(storedUser) as { name?: string; email?: string };
+    } catch {
+      return null;
     }
-  }, []);
+  }, [storedUser]);
+  const [appliedUser, setAppliedUser] = useState<string | null>(null);
+  if (storedUser && appliedUser !== storedUser) {
+    setAppliedUser(storedUser);
+    if (parsedUser?.name) setName(parsedUser.name);
+    if (parsedUser?.email) setEmail(parsedUser.email);
+  }
 
   const handleUpdateProfile = async () => {
     if (!name || !email) { toast.error('Name and email required'); return; }
     setSaving(true);
     try {
       const updated = await api.auth.updateProfile({ name, email });
-      localStorage.setItem('admin_user', JSON.stringify(updated));
+      writeLocalStorage('admin_user', JSON.stringify(updated));
       toast.success('Profile updated');
     } catch (err) { toast.error(err instanceof Error ? err.message : 'Failed'); }
     finally { setSaving(false); }

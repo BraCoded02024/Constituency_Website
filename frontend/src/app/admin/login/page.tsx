@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { useIsClient, useLocalStorageRaw, writeLocalStorage } from '@/lib/useIsClient';
 import { demoContent } from '@/lib/demoContent';
 import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -13,16 +14,12 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(true);
+  const mounted = useIsClient();
+  const token = useLocalStorageRaw('admin_token');
 
   useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      router.replace('/admin');
-    } else {
-      setChecking(false);
-    }
-  }, [router]);
+    if (token) router.replace('/admin');
+  }, [token, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,8 +31,8 @@ export default function AdminLoginPage() {
     setLoading(true);
     try {
       const { token, user } = await api.auth.login(email, password);
-      localStorage.setItem('admin_token', token);
-      localStorage.setItem('admin_user', JSON.stringify(user));
+      writeLocalStorage('admin_token', token);
+      writeLocalStorage('admin_user', JSON.stringify(user));
       toast.success(`Welcome back, ${user.name}!`);
       router.push('/admin');
     } catch (err) {
@@ -45,7 +42,7 @@ export default function AdminLoginPage() {
     }
   };
 
-  if (checking) {
+  if (!mounted || token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Loader2 className="w-8 h-8 animate-spin text-npp-blue" />
@@ -74,7 +71,7 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="admin@npp-constituency.org.gh"
+              placeholder="admin@constituency.gov.gh"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-npp-blue focus:ring-2 focus:ring-npp-blue/20 outline-none transition-all text-sm"
               autoComplete="email"
             />

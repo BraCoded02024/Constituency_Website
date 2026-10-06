@@ -18,11 +18,15 @@ export function usePublicList<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [fromFallback, setFromFallback] = useState(false);
+  const [seenToken, setSeenToken] = useState(reloadToken);
+  if (reloadToken !== seenToken) {
+    setSeenToken(reloadToken);
+    setLoading(true);
+  }
 
   useEffect(() => {
     let cancelled = false;
 
-    setLoading(true);
     fetcher()
       .then((result) => {
         if (cancelled) return;

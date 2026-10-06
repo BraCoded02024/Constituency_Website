@@ -168,6 +168,10 @@ async function initializeDatabase() {
     [JSON.stringify(ALL_PRIVILEGES)],
   );
 
+  // Phase 1 — Delegate Management foundation (extends existing DB + delegates table)
+  const { ensureDelegateSchema } = require('./delegateSchema');
+  await ensureDelegateSchema(db);
+
   await seedIfEmpty();
   console.log('Database initialized successfully');
 }

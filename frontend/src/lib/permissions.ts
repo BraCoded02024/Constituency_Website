@@ -1,3 +1,9 @@
+/** Public-site admin (sidebar group and overview widgets). Off until that section should return. */
+export const websiteAdminEnabled = false;
+
+/** Public website (home, news, projects, and the rest). Off until after the primaries. */
+export const publicSiteEnabled = false;
+
 export const ALL_PRIVILEGES = [
   'dashboard',
   'announcements',
@@ -54,7 +60,19 @@ export function hasPrivilege(user: AdminUser | null, privilege: Privilege) {
 }
 
 export function navPrivilegeFromHref(href: string): Privilege {
-  if (href === '/admin') return 'dashboard';
-  const segment = href.replace('/admin/', '');
-  return segment as Privilege;
+  if (href === '/admin' || href === '/admin/') return 'dashboard';
+  const segment = href.replace(/^\/admin\/?/, '').split('/')[0] || 'dashboard';
+  const mapped: Record<string, Privilege> = {
+    'electoral-areas': 'delegates',
+    'polling-stations': 'delegates',
+    'delegate-categories': 'delegates',
+    'survey-dashboard': 'delegates',
+    'follow-ups': 'delegates',
+    sms: 'delegates',
+    'delegate-reports': 'delegates',
+    activity: 'delegates',
+  };
+  if (mapped[segment]) return mapped[segment];
+  if ((ALL_PRIVILEGES as readonly string[]).includes(segment)) return segment as Privilege;
+  return 'dashboard';
 }

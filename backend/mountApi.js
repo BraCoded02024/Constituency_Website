@@ -97,6 +97,13 @@ module.exports = function mountApi(app) {
   app.use('/api/services', require('./routes/services'));
   app.use('/api/success-stories', require('./routes/successStories'));
   app.use('/api/delegates', require('./routes/delegates'));
+  app.use('/api/electoral-areas', require('./routes/electoralAreas'));
+  app.use('/api/polling-stations', require('./routes/pollingStations'));
+  app.use('/api/delegate-categories', require('./routes/delegateCategories'));
+  app.use('/api/delegate-dashboard', require('./routes/delegateDashboard'));
+  app.use('/api/delegate-reports', require('./routes/delegateReports'));
+  app.use('/api/activity', require('./routes/activity'));
+  app.use('/api/sms', require('./routes/sms'));
   app.use('/api/staff', require('./routes/staff'));
 
   app.post('/api/upload', authenticateToken, upload.single('file'), async (req, res) => {

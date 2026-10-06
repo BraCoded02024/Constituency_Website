@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
+import { useLocalStorageRaw } from '@/lib/useIsClient';
 import {
   UserCog, Plus, Search, Edit2, Trash2, X, Loader2, Shield, Check,
 } from 'lucide-react';
@@ -34,7 +35,11 @@ export default function StaffPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
+  const storedUser = useLocalStorageRaw('admin_user');
+  const currentUser = useMemo(() => {
+    if (!storedUser) return null;
+    try { return JSON.parse(storedUser) as AdminUser; } catch { return null; }
+  }, [storedUser]);
 
   const load = async () => {
     setLoading(true);
@@ -49,11 +54,18 @@ export default function StaffPage() {
   };
 
   useEffect(() => {
-    const stored = localStorage.getItem('admin_user');
-    if (stored) {
-      try { setCurrentUser(JSON.parse(stored)); } catch { /* ignore */ }
-    }
-    load();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await api.staff.getAll();
+        if (!cancelled) setStaff(data);
+      } catch (err) {
+        if (!cancelled) toast.error(err instanceof Error ? err.message : 'Failed to load staff');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const filtered = staff.filter((s) => {

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useIsClient } from '@/lib/useIsClient';
 import { NPP_FLAG_SRC } from '@/lib/siteImages';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -60,11 +61,13 @@ const linkVariants = {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const pathname = usePathname();
-
-  useEffect(() => { setMounted(true); }, []);
-  useEffect(() => { setIsOpen(false); }, [pathname]);
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (pathname !== menuPath) {
+    setMenuPath(pathname);
+    if (isOpen) setIsOpen(false);
+  }
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';

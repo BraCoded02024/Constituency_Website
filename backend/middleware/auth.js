@@ -12,6 +12,9 @@ function authenticateToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    if (!decoded?.id) {
+      return res.status(403).json({ error: 'Invalid token payload.' });
+    }
     req.user = decoded;
     next();
   } catch {
@@ -19,4 +22,25 @@ function authenticateToken(req, res, next) {
   }
 }
 
-module.exports = { authenticateToken, JWT_SECRET };
+/** Optional DB check that the admin is still active (use after authenticateToken). */
+async function requireActiveAdmin(req, res, next) {
+  try {
+    const { getDb } = require('../data/db');
+    const { rows } = await getDb().query(
+      'SELECT id, is_active FROM admins WHERE id = $1',
+      [req.user.id],
+    );
+    if (!rows[0]) {
+      return res.status(403).json({ error: 'Account not found.' });
+    }
+    if (rows[0].is_active === false) {
+      return res.status(403).json({ error: 'Your account has been deactivated.' });
+    }
+    next();
+  } catch (err) {
+    console.error('Active admin check failed:', err.message);
+    res.status(503).json({ error: 'Unable to verify account status' });
+  }
+}
+
+module.exports = { authenticateToken, requireActiveAdmin, JWT_SECRET };

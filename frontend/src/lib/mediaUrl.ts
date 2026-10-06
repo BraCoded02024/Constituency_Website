@@ -9,9 +9,6 @@ export function getApiOrigin(): string {
     return fromEnv.replace(/\/api\/?$/, '').replace(/\/$/, '');
   }
   if (typeof window !== 'undefined') {
-    if (process.env.NODE_ENV === 'development') {
-      return `http://${window.location.hostname}:5001`;
-    }
     return window.location.origin.replace(/\/$/, '');
   }
   return (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5001').replace(/\/$/, '');

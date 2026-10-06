@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Loader2, Trash2, MessageSquare, X, Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Trash2, MessageSquare, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ConcernResponse {
@@ -42,6 +42,15 @@ export default function AdminConcernsPage() {
   const [sending, setSending] = useState(false);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const statusParam = searchParams.get('status');
+  const categoryParam = searchParams.get('category');
+  const queryKey = `${statusParam ?? ''}|${categoryParam ?? ''}`;
+  const [appliedQuery, setAppliedQuery] = useState(queryKey);
+  if (queryKey !== appliedQuery) {
+    setAppliedQuery(queryKey);
+    if (statusParam && (STATUSES as readonly string[]).includes(statusParam)) setFilter(statusParam);
+    if (categoryParam) setSearch(decodeURIComponent(categoryParam));
+  }
 
   const load = () => {
     api.concerns.getAll()
@@ -51,13 +60,6 @@ export default function AdminConcernsPage() {
   };
 
   useEffect(() => { load(); }, []);
-
-  useEffect(() => {
-    const st = searchParams.get('status');
-    if (st && (STATUSES as readonly string[]).includes(st)) setFilter(st);
-    const cat = searchParams.get('category');
-    if (cat) setSearch(decodeURIComponent(cat));
-  }, [searchParams]);
 
   useEffect(() => {
     const open = searchParams.get('open');

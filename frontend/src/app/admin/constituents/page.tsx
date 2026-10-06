@@ -41,6 +41,12 @@ export default function AdminConstituentsPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const qParam = searchParams.get('q');
+  const [appliedQ, setAppliedQ] = useState<string | null>(null);
+  if (qParam !== appliedQ) {
+    setAppliedQ(qParam);
+    if (qParam) setSearch(decodeURIComponent(qParam));
+  }
 
   const load = () => {
     api.constituents.getAll()
@@ -50,11 +56,6 @@ export default function AdminConstituentsPage() {
   };
 
   useEffect(() => { load(); }, []);
-
-  useEffect(() => {
-    const q = searchParams.get('q');
-    if (q) setSearch(decodeURIComponent(q));
-  }, [searchParams]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Remove this constituent?')) return;
